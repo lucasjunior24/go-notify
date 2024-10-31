@@ -72,7 +72,6 @@ class UserInDB(User):
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-known_tokens = set([""])
 auth_scheme = HTTPBearer()
 async def get_token(
     auth: Optional[HTTPAuthorizationCredentials] = Depends(auth_scheme),
@@ -202,5 +201,5 @@ async def read_own_items(
 
 
 @user_router.get("/status/")
-async def read_system_status(token: HTTPAuthorizationCredentials = Depends(auth_scheme)):
+async def read_system_status(token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)]):
     return {"status": token}

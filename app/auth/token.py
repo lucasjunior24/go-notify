@@ -18,7 +18,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 fake_users_db = {
     "johndoe": {
         "username": "johndoe",
-        "full_name": "John Doe",
+        "email": "John Doe",
         "email": "johndoe@example.com",
         "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
         "disabled": False,
@@ -55,7 +55,10 @@ def get_password_hash(password):
 def get_user(db, username: str):
     if username in db:
         user_dict = db[username]
-        return UserInDB(**user_dict)
+        return UserInDB(email=user_dict["email"],
+                        username=user_dict["username"],
+                        hashed_password=user_dict["hashed_password"],
+                        password="")
 
 
 def authenticate_user(fake_db, username: str, password: str):

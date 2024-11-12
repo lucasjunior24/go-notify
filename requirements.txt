@@ -2,4 +2,4 @@ fastapi[standard]==0.113.0
 pydantic==2.8.0
 pyjwt==2.9.0
 passlib[bcrypt]
-mongoengine==0.27.0
+mongoengine==0.29.1

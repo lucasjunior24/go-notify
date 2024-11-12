@@ -10,6 +10,7 @@ from fastapi.security import (
 
 from app.auth.token import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, fake_users_db, get_password_hash
 from app.db.models.user import User
+from app.dtos.response import ResponseDTO
 from app.dtos.user import Token, UserDTO
 
 
@@ -66,10 +67,10 @@ async def password(
 
 
 
-@user_router.get("/users/me/items/")
+@user_router.get("/users/me/items/", response_model=ResponseDTO)
 async def read_own_items(
     token: HTTPAuthorizationCredentials = Depends(get_token)):
-    return [{"item_id": "Foo", "owner": token}]
+    return ResponseDTO(data=[{"item_id": "Foo", "owner": token}], message="success")
 
 
 @user_router.get("/status/")

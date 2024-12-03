@@ -1,10 +1,13 @@
 from datetime import datetime, timedelta, timezone
-from fastapi.security import HTTPBearer
+from typing import Optional
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 import jwt
 from passlib.context import CryptContext
 
+from app.db.models.user import User
 from app.dtos.user import UserInDB
-
+from app.auth.session import manager
 class AccessTokenBearer(HTTPBearer):
   pass
 
@@ -14,23 +17,21 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+auth_scheme = HTTPBearer()
 
-fake_users_db = {
-    "johndoe": {
-        "username": "johndoe",
-        "email": "John Doe",
-        "email": "johndoe@example.com",
-        "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
-        "disabled": False,
-    },
-    "alice": {
-        "username": "alice",
-        "full_name": "Alice Chains",
-        "email": "alicechains@example.com",
-        "hashed_password": "$2b$12$gSvqqUPvlXP2tfVFaWK1Be7DlH.PKZbv5H8KnzzVgXXbVxpva.pFm",
-        "disabled": True,
-    },
-}
+
+async def get_token(
+    auth: Optional[HTTPAuthorizationCredentials] = Depends(auth_scheme),
+) -> str:
+    # Simulate a database query to find a known token
+
+    if auth is None or manager.validate_token(auth.credentials) is False:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+        )
+    return auth.credentials
+
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
@@ -61,8 +62,8 @@ def get_user(db, username: str):
                         password="")
 
 
-def authenticate_user(fake_db, username: str, password: str):
-    user = get_user(fake_db, username)
+def authenticate_user(email: str, password: str):
+    user = User.get_user_by_email(email)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):

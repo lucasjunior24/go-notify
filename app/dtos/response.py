@@ -1,6 +1,5 @@
 
-from typing import TypeVar
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
 
 from pydantic import BaseModel
 
@@ -11,3 +10,16 @@ class ResponseDTO[T](BaseModel):
     message: str
     status: str = "success"
 
+
+
+class ResponseModelDTO[T](BaseModel):
+    data: T
+    message: str
+    status: str = "success"
+
+
+
+class ProductDTO(BaseModel):
+    name: str
+    price: str
+    description: str

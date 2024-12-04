@@ -12,7 +12,7 @@ class ResponseDTO[T](BaseModel):
 
 
 
-class ResponseModelDTO[T](BaseModel):
+class ResponseModelDTO(BaseModel, Generic[T]):
     data: T
     message: str
     status: str = "success"

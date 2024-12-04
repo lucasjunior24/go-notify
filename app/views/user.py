@@ -46,18 +46,18 @@ async def read_users_me():
     return manager.sessions
 
 
-@user_router.get("/users/me/items/", response_model=ResponseModelDTO)
+@user_router.get("/users/me/items/", response_model=ResponseModelDTO[list[UserDTO]])
 async def read_own_items(
     token: HTTPAuthorizationCredentials = Depends(get_token)):
     return ResponseDTO(data=[{"item_id": "Foo", "owner": token}], message="success")
 
 
-@user_router.get("", response_model=ResponseModelDTO)
+@user_router.get("", responses={201: {"model": ResponseModelDTO[UserDTO]}}, response_model=ResponseModelDTO[UserDTO])
 async def read_system_status(token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], email: str):
     user = User.get_user_by_email(email)
     return ResponseDTO(data=user.to_json(), message="success")
 
-@user_router.post("")
+@user_router.post("",responses={201: {"model": ResponseModelDTO[UserDTO]}},  response_model=ResponseModelDTO[UserDTO])
 async def create(
     user: UserDTO,
 ):

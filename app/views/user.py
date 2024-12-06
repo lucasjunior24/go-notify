@@ -1,30 +1,22 @@
 
 from datetime import timedelta
-from typing import Annotated, Optional
-from app.auth.session import Session, create_session, manager
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from fastapi import APIRouter, Depends, FastAPI, HTTPException, Security, status
+from typing import Annotated
+from app.auth.session import SessionDTO, manager
+from fastapi.security import HTTPAuthorizationCredentials
+from fastapi import APIRouter, Depends, FastAPI, HTTPException
 from fastapi.security import (
     OAuth2PasswordRequestForm,
 )
 
 from app.auth.token import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_password_hash, get_token
+from app.db.models.session import Session
 from app.db.models.user import User
-from app.dtos.response import ResponseDTO, ResponseModelDTO
+from app.dtos.response import ResponseDTO, ResponseModelDTO, UserModelDTO
 from app.dtos.user import Token, UserDTO
 
+app = FastAPI(description="test")
 
-
-
-user_router = APIRouter(
-    prefix="/user",
-    tags=["user"],
-    # dependencies=[Depends(get_token)],
-    responses={404: {"description": "Not found"}},
-)
-
-
-@user_router.post("/token")
+@app.post("/login")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
 ) -> Token:
@@ -32,32 +24,32 @@ async def login_for_access_token(
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
+    access_token, expire = create_access_token(
         data={"sub": user.email, "scopes": form_data.scopes},
         expires_delta=access_token_expires,
     )
-    create_session(access_token, form_data.username)
+    Session.create(token=access_token, expires_at=expire, user_name=user.name, user_id=str(user.id))
     return Token(access_token=access_token, token_type="bearer")
 
 
-@user_router.get("/sessions", response_model=list[Session])
+@app.get("/sessions", response_model=list[SessionDTO])
 async def read_users_me():
     print(manager.sessions)
     return manager.sessions
 
 
-@user_router.get("/users/me/items/", response_model=ResponseModelDTO[list[UserDTO]])
+@app.get("/users/me/items/", response_model=ResponseModelDTO[list[dict]])
 async def read_own_items(
     token: HTTPAuthorizationCredentials = Depends(get_token)):
     return ResponseDTO(data=[{"item_id": "Foo", "owner": token}], message="success")
 
 
-@user_router.get("", responses={201: {"model": ResponseModelDTO[UserDTO]}}, response_model=ResponseModelDTO[UserDTO])
+@app.get("/user", response_model=ResponseModelDTO[UserModelDTO])
 async def read_system_status(token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], email: str):
     user = User.get_user_by_email(email)
     return ResponseDTO(data=user.to_json(), message="success")
 
-@user_router.post("",responses={201: {"model": ResponseModelDTO[UserDTO]}},  response_model=ResponseModelDTO[UserDTO])
+@app.post("",responses={201: {"model": ResponseModelDTO[UserModelDTO]}},  response_model=ResponseModelDTO[UserModelDTO])
 async def create(
     user: UserDTO,
 ):

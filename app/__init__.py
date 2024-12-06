@@ -1,9 +1,8 @@
-from fastapi import Header, HTTPException, FastAPI
+from fastapi import Header, HTTPException
 from app.views.product import product_router
-from app.views.user import user_router
 from typing import Annotated
 from app.db import connection
-
+from app.views.user import app
 
 
 async def get_query_token(token: str):
@@ -15,8 +14,7 @@ async def get_token_header(x_token: Annotated[str, Header()]):
 
 
 # app = FastAPI(dependencies=[Depends(get_query_token)])
-app = FastAPI()
 
-app.include_router(user_router)
+
 app.include_router(product_router)
 

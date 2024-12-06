@@ -6,7 +6,7 @@ from app.dtos.response import ProductDTO, ResponseDTO
 
 product_router = APIRouter(
     prefix="/product",
-    tags=["product"],
+    tags=["Product"],
     dependencies=[Depends(get_token)],
     responses={404: {"description": "Not found"}},
 )

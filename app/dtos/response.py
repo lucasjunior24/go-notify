@@ -23,3 +23,15 @@ class ProductDTO(BaseModel):
     name: str
     price: str
     description: str
+
+
+class UserModelDTO(BaseModel):
+    id: str
+    email: str
+    name: str
+    hashed_password: str
+    disabled: bool
+    admin: bool
+    admin_master: bool
+    created_at: str
+    updated_at: str

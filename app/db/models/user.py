@@ -2,6 +2,8 @@ from datetime import datetime
 from typing import cast
 from mongoengine import *
 
+from app.util.exception import ExceptionAPI
+
 class User(Document):
     email = StringField(required=True)
     name = StringField(max_length=50)
@@ -28,4 +30,7 @@ class User(Document):
     @classmethod
     def get_user_by_email(cls, email: str):
         user = cast(User, cls.objects(email=email).first())
+        if user is None:
+            raise ExceptionAPI(message="User not found")
         return user
+    

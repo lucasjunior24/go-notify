@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 from app.auth.token import get_token
 from app.db.models.product import Product
-from app.dtos.response import ProductDTO, ResponseDTO
+from app.dtos.response import ProductDTO, ProductModelDTO, ResponseDTO, ResponseModelDTO
 
 product_router = APIRouter(
     prefix="/product",
@@ -10,11 +10,13 @@ product_router = APIRouter(
     dependencies=[Depends(get_token)],
     responses={404: {"description": "Not found"}},
 )
-@product_router.get("/all")
+@product_router.get("/all", response_model=ResponseModelDTO[list[ProductModelDTO]])
 async def get_all():
-    return {"message": "Product"}
+    all_product = Product.get_all()
+    all_product_json = [product.to_json() for product in all_product]
+    return ResponseDTO(data=all_product_json, message="success")
 
-@product_router.post("")
+@product_router.post("", response_model=ResponseModelDTO[ProductModelDTO])
 async def create_product(
     product: ProductDTO,
 ):
@@ -22,3 +24,9 @@ async def create_product(
     new_product.save()
     return ResponseDTO(data=new_product.to_json(), message="success")
 
+
+
+@product_router.delete("", response_model=ResponseModelDTO[ProductModelDTO])
+async def delete(product_id: str):
+    removed_product = Product.remove(product_id=product_id)
+    return ResponseDTO(data=removed_product.to_json(), message="success")

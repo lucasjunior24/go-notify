@@ -37,3 +37,13 @@ class Session(Document):
     def get_session_by_token(cls, token: str):
         session = cast(Session, cls.objects(token=token).first())
         return session
+    
+
+    @staticmethod
+    def session_expired(token: str) -> bool:
+        type, token = token.split(" ")
+        session = Session.get_session_by_token(token)
+        now = datetime.now()
+        expire = bool(session.expires_at <= now)
+
+        return expire

@@ -5,6 +5,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 import jwt
 from passlib.context import CryptContext
 
+from app.db.models.session import Session
 from app.db.models.user import User
 from app.dtos.user import UserInDB
 from app.auth.session import manager
@@ -25,7 +26,7 @@ async def get_token(
 ) -> str:
     # Simulate a database query to find a known token
 
-    if auth is None or manager.validate_token(auth.credentials) is False:
+    if auth is None or Session.session_expired(token=auth.credentials):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",

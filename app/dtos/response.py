@@ -35,3 +35,12 @@ class UserModelDTO(BaseModel):
     admin_master: bool
     created_at: str
     updated_at: str
+
+
+class ProductModelDTO(BaseModel):
+    id: str
+    name: str
+    price: str
+    description: str
+    created_at: str
+    updated_at: str

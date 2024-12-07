@@ -22,7 +22,6 @@ class BaseDocument(DynamicDocument):
 
     @classmethod
     def get_all(cls):
-        
         document_list = cast(list[cls], cls.objects())
         return document_list
     

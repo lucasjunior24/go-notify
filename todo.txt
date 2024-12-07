@@ -3,3 +3,6 @@
 
 create excepionAPI
 create exception to all status codes
+
+
+create  database model generic with generic crud

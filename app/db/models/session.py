@@ -2,12 +2,12 @@ from datetime import datetime
 from typing import cast
 from mongoengine import *
 
-class Session(Document):
+from app.db.models.base import BaseDocument
+
+class Session(BaseDocument):
     token = StringField(required=True)
     user_id = StringField(max_length=50, required=True)
     user_name = StringField(max_length=100, required=True)
-    created_at = DateTimeField(default=datetime.now(), required=True)
-    updated_at = DateTimeField(default=datetime.now(), required=True)
     expires_at = DateTimeField(default=datetime.now(), required=True)
 
     def to_json(self):
@@ -43,6 +43,8 @@ class Session(Document):
     def session_expired(token: str) -> bool:
         type, token = token.split(" ")
         session = Session.get_session_by_token(token)
+        if session is None:
+            return True
         now = datetime.now()
         expire = bool(session.expires_at <= now)
 

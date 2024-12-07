@@ -3,7 +3,7 @@ from datetime import timedelta
 from typing import Annotated
 from app.auth.session import SessionDTO, manager
 from fastapi.security import HTTPAuthorizationCredentials
-from fastapi import APIRouter, Depends, FastAPI, HTTPException
+from fastapi import  Depends, FastAPI, HTTPException
 from fastapi.security import (
     OAuth2PasswordRequestForm,
 )
@@ -32,10 +32,12 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@app.get("/sessions", response_model=list[SessionDTO])
+@app.get("/sessions", response_model=ResponseModelDTO[list[dict]])
 async def read_users_me():
-    print(manager.sessions)
-    return manager.sessions
+
+    all_sessions = Session.get_all()
+    all_sessions_json = [session.to_json() for session in all_sessions]
+    return ResponseDTO(data=all_sessions_json, message="success")
 
 
 @app.get("/users/me/items/", response_model=ResponseModelDTO[list[dict]])
@@ -49,7 +51,7 @@ async def read_system_status(token: Annotated[HTTPAuthorizationCredentials, Depe
     user = User.get_user_by_email(email)
     return ResponseDTO(data=user.to_json(), message="success")
 
-@app.post("",responses={201: {"model": ResponseModelDTO[UserModelDTO]}},  response_model=ResponseModelDTO[UserModelDTO])
+@app.post("/user",responses={201: {"model": ResponseModelDTO[UserModelDTO]}}, response_model=ResponseModelDTO[UserModelDTO])
 async def create(
     user: UserDTO,
 ):

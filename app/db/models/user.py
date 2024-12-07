@@ -2,17 +2,16 @@ from datetime import datetime
 from typing import cast
 from mongoengine import *
 
+from app.db.models.base import BaseDocument
 from app.util.exception import ExceptionAPI
 
-class User(Document):
+class User(BaseDocument):
     email = StringField(required=True)
     name = StringField(max_length=50)
     hashed_password = StringField(max_length=100)
     disabled = BooleanField(default=False)
     admin = BooleanField(default=False)
     admin_master = BooleanField(default=False)
-    created_at = DateTimeField(default=datetime.now(), required=True)
-    updated_at = DateTimeField(default=datetime.now(), required=True)
 
     def to_json(self):
         return {

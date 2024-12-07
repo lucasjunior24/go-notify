@@ -14,8 +14,9 @@ product_router = APIRouter(
 
 
 @product_router.get("", response_model=ResponseModelDTO[ProductModelDTO])
-async def read_system_status( name: str):
-    product = Product.find('name', name)
+async def read_system_status( key: str, name: str):
+    product = Product.find(key, name)
+    
     return ResponseDTO(data=product.to_json(), message="success")
 
 @product_router.get("/all", response_model=ResponseModelDTO[list[ProductModelDTO]])
@@ -32,6 +33,14 @@ async def create_product(
     new_product.save()
     return ResponseDTO(data=new_product.to_json(), message="success")
 
+@product_router.put("", response_model=ResponseModelDTO[ProductModelDTO])
+async def update(
+    id: str,
+    product: ProductDTO,
+):
+    prod = product.model_dump()
+    product = Product.update(id=id, value=prod)
+    return ResponseDTO(data=product.to_json(), message="success")
 
 
 @product_router.delete("", response_model=ResponseModelDTO[ProductModelDTO])

@@ -23,3 +23,6 @@ class Product(BaseDocument):
     def get_product_by_email(cls, email: str):
         doctor = cast(Product, cls.objects(email=email).first())
         return doctor
+
+
+    

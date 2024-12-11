@@ -1,6 +1,7 @@
 
 from datetime import timedelta
 from typing import Annotated
+from app.views import app
 from app.auth.session import SessionDTO, manager
 from fastapi.security import HTTPAuthorizationCredentials
 from fastapi import  Depends, FastAPI, HTTPException
@@ -14,7 +15,6 @@ from app.db.models.user import User
 from app.dtos.response import ResponseDTO, ResponseModelDTO, UserModelDTO
 from app.dtos.user import Token, UserDTO
 
-app = FastAPI(description="test")
 
 @app.post("/login")
 async def login_for_access_token(
@@ -49,7 +49,7 @@ async def read_own_items(
 @app.get("/user", response_model=ResponseModelDTO[UserModelDTO])
 async def read_system_status(token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], email: str):
     user = User.get_user_by_email(email)
-    return ResponseDTO(data=user.to_json(), message="success")
+    return ResponseDTO(data=user.to_json())
 
 @app.post("/user",responses={201: {"model": ResponseModelDTO[UserModelDTO]}}, response_model=ResponseModelDTO[UserModelDTO])
 async def create(
@@ -58,5 +58,5 @@ async def create(
     hash = get_password_hash(user.password)
     new_user = User(email=user.email, name=user.username, hashed_password=hash)
     new_user.save()
-    return ResponseDTO(data=new_user.to_json(), message="success")
+    return ResponseDTO(data=new_user.to_json())
 

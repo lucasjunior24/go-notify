@@ -1,8 +1,12 @@
 from fastapi import Header, HTTPException
+from app.views.erros import UnicornException
 from app.views.product import product_router
+from app.views.user import app
+from app.views.erros import app
 from typing import Annotated
 from app.db import connection
-from app.views.user import app
+from app.views import app
+
 
 
 async def get_query_token(token: str):

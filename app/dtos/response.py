@@ -1,4 +1,5 @@
 
+from http import HTTPStatus
 from typing import Generic, Optional, TypeVar
 
 from pydantic import BaseModel, ConfigDict
@@ -7,7 +8,7 @@ T = TypeVar('T')
 
 class ResponseDTO[T](BaseModel):
     data: T
-    message: str
+    message: str = HTTPStatus(200).phrase
     status: str = "success"
 
 
@@ -56,3 +57,5 @@ class ProductModelDTO(BaseModel):
     created_at: str
     updated_at: str
     reviews: Optional[list[ReviewDTO]] = None
+
+

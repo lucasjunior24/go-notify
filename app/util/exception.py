@@ -1,7 +1,12 @@
-from pydantic import BaseModel
+from dataclasses import dataclass
 
 
+@dataclass
 class ExceptionAPI(Exception):
   data: str | None = None
-  message: str
-  status = "failed"
+  message: str = "Error"
+  status: str = "failed"
+  status_code: str = 500
+
+
+

@@ -4,4 +4,3 @@ pyjwt==2.9.0
 passlib[bcrypt]
 mongoengine==0.29.1
 marshmallow-mongoengine==0.31.2
-dataclasses==0.8

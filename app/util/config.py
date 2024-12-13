@@ -9,7 +9,7 @@ USER_DB_KEY = os.getenv("USER_DB")
 if USER_DB_KEY:
     print("Chave de API carregada com sucesso:", USER_DB_KEY)
 else:
-    print("Chave de API não encontrada no arquivo .env.")
+    print("Chave de API não encontrada no arquivo .env")
 
 
 PASSWORD_DB_KEY = os.getenv("PASSWORD_DB")

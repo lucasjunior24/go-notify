@@ -1,6 +1,7 @@
 fastapi[standard]==0.113.0
 pydantic==2.8.0
-pyjwt==2.9.0
-passlib[bcrypt]
+pyjwt==2.10.1
+bcrypt==4.2.1
+passlib[bcrypt]==1.7.4
 mongoengine==0.29.1
 marshmallow-mongoengine==0.31.2

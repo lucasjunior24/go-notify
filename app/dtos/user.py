@@ -17,6 +17,3 @@ class UserDTO(BaseModel):
     email: str
     password: str
 
-
-class UserInDB(UserDTO):
-    hashed_password: str

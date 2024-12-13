@@ -1,0 +1,31 @@
+services:
+  mongo:
+    image: mongo:4.4.6
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - mongo-compose-network
+
+
+  go-notify-local:
+    restart: always
+    image: go-notify-local
+    container_name: go-notify-local
+    command: sh -c "uvicorn main:app --reload --host 0.0.0.0 --port 8008"
+    ports:
+      - "8008:8008"
+    env_file:
+      - ../../.env
+    volumes:
+      - ../../:/app
+
+    depends_on:
+      - mongo
+    networks:
+      - mongo-compose-network
+  
+
+networks: 
+  mongo-compose-network:
+    driver: bridge

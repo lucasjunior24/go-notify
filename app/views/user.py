@@ -2,7 +2,6 @@
 from datetime import timedelta
 from typing import Annotated
 from app.views import app
-from app.auth.session import SessionDTO, manager
 from fastapi.security import HTTPAuthorizationCredentials
 from fastapi import  Depends, FastAPI, HTTPException
 from fastapi.security import (

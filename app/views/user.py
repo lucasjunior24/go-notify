@@ -41,8 +41,8 @@ async def read_users_me():
 
 @app.get("/users/me/items/", response_model=ResponseModelDTO[list[dict]])
 async def read_own_items(
-    token: HTTPAuthorizationCredentials = Depends(get_token)):
-    return ResponseDTO(data=[{"item_id": "Foo", "owner": token}], message="success")
+    ):
+    return ResponseDTO(data=[{"item_id": "Foo", "owner": 'owner'}], message="success")
 
 
 @app.get("/user", response_model=ResponseModelDTO[UserModelDTO])

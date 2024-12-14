@@ -1,10 +1,12 @@
 from mongoengine import *
 
+from app.util.config import DB_URL, DB_NAME_KEY
+
 
 print("")
 print("")
-print("call connect")
+print(DB_NAME_KEY)
 print("")
 print("")
 
-connect('go_notify')
+connect(DB_NAME_KEY, host=DB_URL)

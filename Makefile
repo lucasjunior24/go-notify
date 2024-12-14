@@ -11,9 +11,3 @@ deploy-teste:
 	docker build -t go-notify-local .
 	docker-compose -f docker-compose.yml up -d
 
-
-
-deploy-local-mongo:
-	docker build -t go-notify-local .
-	docker build -t mongo .
-	docker-compose -f compose/compose-local/docker-compose.yaml up -d

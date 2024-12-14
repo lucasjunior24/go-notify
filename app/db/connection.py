@@ -1,12 +1,6 @@
 from mongoengine import *
 
-from app.util.config import DB_URL, DB_NAME_KEY
+from app.util.config import DB_URL, DB_NAME
 
 
-print("")
-print("")
-print(DB_NAME_KEY)
-print("")
-print("")
-
-connect(DB_NAME_KEY, host=DB_URL)
+connect(DB_NAME, host=DB_URL)

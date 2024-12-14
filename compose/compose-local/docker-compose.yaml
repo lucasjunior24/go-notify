@@ -2,12 +2,12 @@
 services:
   mongo:
     restart: always
-    image: mongo
+    image: mongo:7.0.6
     container_name: mongo
     ports:
       - "27017:27017"
     networks:
-      - go-notify-network
+      - notify-network
 
 
   go-notify-local:
@@ -22,10 +22,10 @@ services:
     volumes:
       - ../../:/app
     networks:
-      - go-notify-network
+      - notify-network
   
 
 networks: 
-  go-notify-network:
-    name: go-notify-network
-    external: true
+  notify-network:
+    name: notify-network
+    driver: bridge

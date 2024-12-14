@@ -7,8 +7,7 @@ from passlib.context import CryptContext
 
 from app.db.models.session import Session
 from app.db.models.user import User
-from app.dtos.user import UserInDB
-from app.auth.session import manager
+
 class AccessTokenBearer(HTTPBearer):
   pass
 

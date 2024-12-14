@@ -1,13 +1,13 @@
 from fastapi import Header, HTTPException
 from app.views.erros import UnicornException
 from app.views.product import product_router
+from app.db import connection
 from app.views.user import app
 from app.views.erros import app
 from typing import Annotated
-from app.db import connection
+
 from app.views import app
 from fastapi.middleware.cors import CORSMiddleware
-
 
 async def get_query_token(token: str):
     if token != "jessica":
@@ -15,6 +15,7 @@ async def get_query_token(token: str):
 async def get_token_header(x_token: Annotated[str, Header()]):
     if x_token != "fake-super-secret-token":
         raise HTTPException(status_code=400, detail="X-Token header invalid")
+    
     
 origins = [
     "http://localhost",

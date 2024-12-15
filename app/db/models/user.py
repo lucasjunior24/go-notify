@@ -3,7 +3,7 @@ from typing import cast
 from mongoengine import *
 
 from app.db.models.base import BaseDocument
-from app.util.exception import ExceptionAPI
+from app.util.exception import ExceptionAPI, UnauthorizedAPI
 
 class User(BaseDocument):
     email = StringField(required=True)
@@ -30,6 +30,6 @@ class User(BaseDocument):
     def get_user_by_email(cls, email: str):
         user = cast(User, cls.objects(email=email).first())
         if user is None:
-            raise ExceptionAPI(message="User not found")
+            raise ExceptionAPI()
         return user
     

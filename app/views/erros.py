@@ -1,6 +1,8 @@
 
 from http import HTTPStatus
-from app.util.exception import ExceptionAPI
+from app.dtos.response import ResponseDTO
+from app.util.exception import ExceptionAPI, IExceptionAPI,UnauthorizedAPI
+from fastapi.encoders import jsonable_encoder
 from app.views import app
 from fastapi import Request, Response
 from fastapi.responses import JSONResponse
@@ -10,11 +12,13 @@ class UnicornException(Exception):
         self.name = name
 
 
-@app.exception_handler(ExceptionAPI)
-async def unicorn_exception_handler(request: Request, exc: ExceptionAPI):
+@app.exception_handler(IExceptionAPI)
+async def exception_handler(request: Request, exc: IExceptionAPI):
+    message = exc.message if exc.message else HTTPStatus(exc.status_code).description
+    response = ResponseDTO(message=message, status=exc.status, data=None)
     return JSONResponse(
         status_code=exc.status_code,
-        content={"message": exc.message if exc.message else HTTPStatus(exc.status_code).phrase, "status": HTTPStatus(exc.status_code).phrase},
+        content=jsonable_encoder(response),
     )
 
 

@@ -1,6 +1,7 @@
 
 from datetime import timedelta
 from typing import Annotated
+from app.util.schema.user import user_schema
 from app.views import app
 from fastapi.security import HTTPAuthorizationCredentials
 from fastapi import  Depends, FastAPI, HTTPException
@@ -47,8 +48,17 @@ async def read_own_items(
 
 @app.get("/user", response_model=ResponseModelDTO[UserModelDTO])
 async def read_system_status(token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], email: str):
-    user = User.get_user_by_email(email)
+    user = User.find('email', email)
     return ResponseDTO(data=user.to_json())
+
+
+@app.get("/user/sessions", response_model=ResponseModelDTO[list[UserModelDTO]])
+async def read_system_status(token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], email: str):
+    users = User.get_user_with_sessions(email)
+    dump_data = [user_schema.dump(user) for user in users]
+    return ResponseDTO(data=dump_data)
+
+
 
 @app.post("/user",responses={201: {"model": ResponseModelDTO[UserModelDTO]}}, response_model=ResponseModelDTO[UserModelDTO])
 async def create(

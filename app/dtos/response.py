@@ -29,10 +29,12 @@ class UserModelDTO(BaseModel):
     name: str
     hashed_password: str
     disabled: bool
+    _cls: str
     admin: bool
     admin_master: bool
     created_at: str
     updated_at: str
+    session: list[dict]
 
 
 class ReviewDTO(BaseModel):

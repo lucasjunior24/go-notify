@@ -7,6 +7,7 @@ from passlib.context import CryptContext
 
 from app.db.models.session import Session
 from app.db.models.user import User
+from app.util.exception import UnauthorizedAPI
 
 class AccessTokenBearer(HTTPBearer):
   pass
@@ -26,10 +27,7 @@ async def get_token(
     # Simulate a database query to find a known token
 
     if auth is None or Session.session_expired(token=auth.credentials):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-        )
+        raise UnauthorizedAPI()
     return auth.credentials
 
 
@@ -54,7 +52,7 @@ def get_password_hash(password):
 
 
 def authenticate_user(email: str, password: str):
-    user = User.get_user_by_email(email)
+    user = User.find("email", email)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):

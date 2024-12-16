@@ -42,9 +42,10 @@ async def update(
     id: str,
     product: CreateProductDTO,
 ):
-    prod = product.model_dump()
-    product = Product.update(id=id, value=prod)
-    return ResponseDTO(data=product.to_json(), message="success")
+    product_json = product.model_dump()
+    product = Product.update(id=id, value=product_json)
+    dump_data = product_schema.dump(product)
+    return ResponseDTO(data=dump_data, message="success")
 
 
 @product_router.delete("", response_model=ResponseModelDTO[ProductModelDTO])

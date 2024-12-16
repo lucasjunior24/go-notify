@@ -1,5 +1,5 @@
-from datetime import datetime
 from typing import cast
+from bson import ObjectId
 from mongoengine import *
 
 from app.db.models.base import BaseDocument
@@ -26,10 +26,17 @@ class User(BaseDocument):
             "updated_at": str(self.updated_at),
         }
     
+
     @classmethod
-    def get_user_by_email(cls, email: str):
-        user = cast(User, cls.objects(email=email).first())
-        if user is None:
-            raise ExceptionAPI()
-        return user
-    
+    def get_user_with_sessions(cls, user_id: str):
+        users_db = list(cls.objects().aggregate([ { "$addFields": { "id": "$_id" } },{'$match' : { "id" : ObjectId(user_id) }}, {
+        '$lookup':
+            {
+                'from': 'session',
+                'localField':'user_id',
+                'foreignField': 'id',
+                'as': 'session'
+            }
+        }]))
+        users = [User(**user) for user in users_db]
+        return users

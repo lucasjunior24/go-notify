@@ -40,3 +40,4 @@ class User(BaseDocument):
         }]))
         users = [User(**user) for user in users_db]
         return users
+    

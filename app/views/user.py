@@ -2,6 +2,7 @@
 from datetime import timedelta
 from typing import Annotated
 from app.controllers.base import BaseController
+from app.controllers.user import UserController
 from app.util.schema.user import user_schema
 from app.views import app
 from fastapi.security import HTTPAuthorizationCredentials
@@ -63,7 +64,7 @@ async def read_system_status(token: Annotated[HTTPAuthorizationCredentials, Depe
 @app.get("/user/refactor", response_model=ResponseModelDTO[UserDBDTO])
 async def read_system_status(use_id: str):
     
-    base = BaseController("user")
+    base = UserController()
     data = base.get_by_id(use_id, UserDBDTO)
     return ResponseDTO(data=data)
 
@@ -72,7 +73,7 @@ async def read_system_status(use_id: str):
 async def create(
     user: UserDTO,
 ):
-    base = BaseController("user")
+    base = UserController()
     hash = get_password_hash(user.password)
 
     user = UserDBDTO(email=user.email, name=user.username, hashed_password=hash)

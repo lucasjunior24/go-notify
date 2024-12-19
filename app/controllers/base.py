@@ -12,12 +12,13 @@ class BaseController:
     self.collection = database[self.collection_name]
 
 
-
   def create(self, dto: type[DTO]):
     dto_json = dto.model_dump(exclude=["id"], mode='json')
     self.collection.insert_one(dto_json)
 
-
+  def get_filter(self, key: str, value: str, dto: Type[T]) -> Type[T]:
+    data = self.collection.find_one({key: value})
+    return self.__create_dto(data, dto)
 
 
   def get_by_id(self, id: str, dto: Type[T]) -> Type[T]:

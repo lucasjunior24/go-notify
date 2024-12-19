@@ -14,7 +14,7 @@ else:
 APP_NAME_KEY = os.getenv("APP_NAME")
 PASSWORD_DB_KEY = os.getenv("PASSWORD_DB")
 
-DB_NAME = os.getenv("DB_NAME", "my_store")
+DB_NAME = os.getenv("DB_NAME")
 IP_WITH_PORT_DB = os.getenv("IP_WITH_PORT_DB")
 DB_URL = f"mongodb://{IP_WITH_PORT_DB}"
 # NEW_DB_URL = f"mongodb+srv://{USER_DB_KEY}:{PASSWORD_DB_KEY}@{DB_URL}/?retryWrites=true&w=majority&appName={APP_NAME_KEY}"

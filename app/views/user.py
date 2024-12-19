@@ -1,10 +1,11 @@
 
 from datetime import timedelta
 from typing import Annotated
+from app.controllers.base import BaseController
 from app.util.schema.user import user_schema
 from app.views import app
 from fastapi.security import HTTPAuthorizationCredentials
-from fastapi import  Depends, FastAPI, HTTPException
+from fastapi import  Depends, HTTPException
 from fastapi.security import (
     OAuth2PasswordRequestForm,
 )
@@ -13,7 +14,7 @@ from app.auth.token import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, creat
 from app.db.models.session import Session
 from app.db.models.user import User
 from app.dtos.response import ResponseDTO, ResponseModelDTO, UserModelDTO
-from app.dtos.user import Token, UserDTO
+from app.dtos.user import Token, UserDBDTO, UserDTO
 
 
 @app.post("/login")
@@ -59,13 +60,23 @@ async def read_system_status(token: Annotated[HTTPAuthorizationCredentials, Depe
     return ResponseDTO(data=dump_data)
 
 
+@app.get("/user/refactor", response_model=ResponseModelDTO[UserDBDTO])
+async def read_system_status(use_id: str):
+    
+    base = BaseController("user")
+    data = base.get_by_id(use_id, UserDBDTO)
+    return ResponseDTO(data=data)
 
-@app.post("/user",responses={201: {"model": ResponseModelDTO[UserModelDTO]}}, response_model=ResponseModelDTO[UserModelDTO])
+
+@app.post("/user",responses={201: {"model": ResponseModelDTO[UserModelDTO]}}, response_model=ResponseModelDTO[UserDBDTO])
 async def create(
     user: UserDTO,
 ):
+    base = BaseController("user")
     hash = get_password_hash(user.password)
-    new_user = User(email=user.email, name=user.username, hashed_password=hash)
-    new_user.save()
-    return ResponseDTO(data=new_user.to_json())
+
+    user = UserDBDTO(email=user.email, name=user.username, hashed_password=hash)
+    base.create(user)
+
+    return ResponseDTO(data=user)
 

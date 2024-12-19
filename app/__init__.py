@@ -1,5 +1,5 @@
 from fastapi import Header, HTTPException
-from app.views.erros import UnicornException
+
 from app.views.product import product_router
 from app.db import connection
 from app.views.user import app

@@ -1,6 +1,9 @@
-from mongoengine import *
 
 from app.util.config import DB_URL, DB_NAME
 
+from pymongo import MongoClient
 
-connect(DB_NAME, host=DB_URL)
+client = MongoClient(DB_URL)
+
+
+database = client.get_database(DB_NAME)

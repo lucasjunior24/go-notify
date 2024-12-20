@@ -1,14 +1,12 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 import jwt
 from passlib.context import CryptContext
 
 from app.controllers.session import SessionController
 from app.controllers.user import UserController
-from app.db.models.session import Session
-from app.db.models.user import User
 from app.dtos.user import UserDBDTO
 from app.util.exception import UnauthorizedAPI
 

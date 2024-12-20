@@ -1,11 +1,10 @@
 
 from datetime import timedelta
 from typing import Annotated
-from app.controllers.base import BaseController
 from app.controllers.session import SessionController
 from app.controllers.user import UserController
 from app.dtos.session import SessionDBDTO
-from app.util.schema.user import user_schema
+
 from app.views import app
 from fastapi.security import HTTPAuthorizationCredentials
 from fastapi import  Depends, HTTPException
@@ -15,9 +14,9 @@ from fastapi.security import (
 
 from app.auth.token import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_password_hash, get_token
 from app.db.models.session import Session
-from app.db.models.user import User
+
 from app.dtos.response import ResponseDTO, ResponseModelDTO, UserModelDTO
-from app.dtos.user import Token, UserDBDTO, UserDTO
+from app.dtos.user import Token, UserDBDTO, UserDBSessionDTO, UserDTO
 
 
 @app.post("/login")
@@ -52,25 +51,26 @@ async def read_own_items(
     return ResponseDTO(data=[{"item_id": "Foo", "owner": 'owner'}], message="success")
 
 
-@app.get("/user", response_model=ResponseModelDTO[UserModelDTO])
+@app.get("/user", response_model=ResponseModelDTO[UserDBDTO])
 async def read_system_status(token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], email: str):
     base = UserController()
 
-    data = base.get_filter('email', email, UserDBDTO)
+    data = base.get_filter('email', email)
     return ResponseDTO(data=data)
 
-@app.get("/user/sessions", response_model=ResponseModelDTO[list[UserModelDTO]])
-async def read_system_status(token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], email: str):
-    users = User.get_user_with_sessions(email)
-    dump_data = [user_schema.dump(user) for user in users]
-    return ResponseDTO(data=dump_data)
+@app.get("/user/sessions", response_model=ResponseModelDTO[list[UserDBSessionDTO]])
+async def read_system_status(token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], user_id: str):
+
+    base = UserController()
+    data = base.get_user_with_sessions(user_id)
+    return ResponseDTO(data=data)
 
 
 @app.get("/user/refactor", response_model=ResponseModelDTO[UserDBDTO])
 async def read_system_status(use_id: str):
     
     base = UserController()
-    data = base.get_by_id(use_id, UserDBDTO)
+    data = base.get_by_id(use_id)
     return ResponseDTO(data=data)
 
 

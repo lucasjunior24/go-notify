@@ -2,7 +2,9 @@
 from datetime import timedelta
 from typing import Annotated
 from app.controllers.base import BaseController
+from app.controllers.session import SessionController
 from app.controllers.user import UserController
+from app.dtos.session import SessionDBDTO
 from app.util.schema.user import user_schema
 from app.views import app
 from fastapi.security import HTTPAuthorizationCredentials
@@ -30,7 +32,9 @@ async def login_for_access_token(
         data={"sub": user.email, "scopes": form_data.scopes},
         expires_delta=access_token_expires,
     )
-    Session.create(token=access_token, expires_at=expire, user_name=user.name, user_id=str(user.id))
+    controller = SessionController()
+    session = SessionDBDTO(token=access_token, expires_at=expire, user_name=user.name, user_id=str(user.id))
+    controller.create(session)
     return Token(access_token=access_token, token_type="bearer")
 
 
@@ -50,9 +54,10 @@ async def read_own_items(
 
 @app.get("/user", response_model=ResponseModelDTO[UserModelDTO])
 async def read_system_status(token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], email: str):
-    user = User.find('email', email)
-    return ResponseDTO(data=user.to_json())
+    base = UserController()
 
+    data = base.get_filter('email', email, UserDBDTO)
+    return ResponseDTO(data=data)
 
 @app.get("/user/sessions", response_model=ResponseModelDTO[list[UserModelDTO]])
 async def read_system_status(token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], email: str):
@@ -77,7 +82,7 @@ async def create(
     hash = get_password_hash(user.password)
 
     user = UserDBDTO(email=user.email, name=user.username, hashed_password=hash)
-    base.create(user)
+    data = base.create(user)
 
-    return ResponseDTO(data=user)
+    return ResponseDTO(data=data)
 

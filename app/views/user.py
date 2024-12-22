@@ -1,27 +1,32 @@
-
 from datetime import timedelta
 from typing import Annotated
-from app.controllers.session import SessionController
-from app.controllers.user import UserController
+from app.controllers.session import sessionController
+from app.controllers.user import userController
+from app.db.models.user import UserDTO
 from app.dtos.session import SessionDBDTO
 
 from app.views import app
 from fastapi.security import HTTPAuthorizationCredentials
-from fastapi import  Depends, HTTPException
+from fastapi import Depends, HTTPException
 from fastapi.security import (
     OAuth2PasswordRequestForm,
 )
 
-from app.auth.token import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token, get_password_hash, get_token
-from app.db.models.session import Session
+from app.auth.token import (
+    ACCESS_TOKEN_EXPIRE_MINUTES,
+    authenticate_user,
+    create_access_token,
+    get_password_hash,
+    get_token,
+)
 
-from app.dtos.response import ResponseDTO, ResponseModelDTO, UserModelDTO
-from app.dtos.user import Token, UserDBDTO, UserDBSessionDTO, UserDTO
+from app.dtos.response import ResponseDTO, ResponseModelDTO
+from app.dtos.user import Token, UserDBSessionDTO, createUserDTO
 
 
 @app.post("/login")
 async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
     user = authenticate_user(form_data.username, form_data.password)
     if not user:
@@ -31,58 +36,60 @@ async def login_for_access_token(
         data={"sub": user.email, "scopes": form_data.scopes},
         expires_delta=access_token_expires,
     )
-    controller = SessionController()
-    session = SessionDBDTO(token=access_token, expires_at=expire, user_name=user.name, user_id=str(user.id))
-    controller.create(session)
+    session = SessionDBDTO(
+        token=access_token, expires_at=expire, user_name=user.name, user_id=str(user.id)
+    )
+    sessionController.create(session)
     return Token(access_token=access_token, token_type="bearer")
 
 
-@app.get("/sessions", response_model=ResponseModelDTO[list[dict]])
+@app.get("/sessions", response_model=ResponseModelDTO[list[SessionDBDTO]])
 async def read_users_me():
 
-    all_sessions = Session.get_all()
-    all_sessions_json = [session.to_json() for session in all_sessions]
-    return ResponseDTO(data=all_sessions_json, message="success")
+    all_sessions = sessionController.get_all()
+    return ResponseDTO(data=all_sessions, message="success")
 
 
 @app.get("/users/me/items/", response_model=ResponseModelDTO[list[dict]])
-async def read_own_items(
-    ):
-    return ResponseDTO(data=[{"item_id": "Foo", "owner": 'owner'}], message="success")
+async def read_own_items():
+    return ResponseDTO(data=[{"item_id": "Foo", "owner": "owner"}], message="success")
 
 
-@app.get("/user", response_model=ResponseModelDTO[UserDBDTO])
-async def read_system_status(token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], email: str):
-    base = UserController()
+@app.get("/user", response_model=ResponseModelDTO[UserDTO])
+async def read_system_status(
+    token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], email: str
+):
 
-    data = base.get_filter('email', email)
+    data = userController.get_filter("email", email)
     return ResponseDTO(data=data)
+
 
 @app.get("/user/sessions", response_model=ResponseModelDTO[list[UserDBSessionDTO]])
-async def read_system_status(token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], user_id: str):
-
-    base = UserController()
-    data = base.get_user_with_sessions(user_id)
-    return ResponseDTO(data=data)
-
-
-@app.get("/user/refactor", response_model=ResponseModelDTO[UserDBDTO])
-async def read_system_status(use_id: str):
-    
-    base = UserController()
-    data = base.get_by_id(use_id)
-    return ResponseDTO(data=data)
-
-
-@app.post("/user",responses={201: {"model": ResponseModelDTO[UserModelDTO]}}, response_model=ResponseModelDTO[UserDBDTO])
-async def create(
-    user: UserDTO,
+async def read_system_status(
+    token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], user_id: str
 ):
-    base = UserController()
-    hash = get_password_hash(user.password)
 
-    user = UserDBDTO(email=user.email, name=user.username, hashed_password=hash)
-    data = base.create(user)
-
+    data = userController.get_user_with_sessions(user_id)
     return ResponseDTO(data=data)
 
+
+@app.get("/user/refactor", response_model=ResponseModelDTO[UserDTO])
+async def read_system_status(use_id: str):
+
+    data = userController.get_by_id(use_id)
+    return ResponseDTO(data=data)
+
+
+@app.post(
+    "/user",
+    responses={201: {"model": ResponseModelDTO[UserDTO]}},
+    response_model=ResponseModelDTO[UserDTO],
+)
+async def create(
+    user: createUserDTO,
+):
+    hash = get_password_hash(user.password)
+    user = UserDTO(email=user.email, name=user.username, hashed_password=hash)
+    data = userController.create(user)
+
+    return ResponseDTO(data=data)

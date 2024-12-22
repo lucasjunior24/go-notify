@@ -5,9 +5,9 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 import jwt
 from passlib.context import CryptContext
 
-from app.controllers.session import SessionController
+from app.controllers.session import sessionController
 from app.controllers.user import UserController
-from app.dtos.user import UserDBDTO
+from app.db.models.user import UserDTO
 from app.util.exception import UnauthorizedAPI
 
 class AccessTokenBearer(HTTPBearer):
@@ -26,8 +26,8 @@ async def get_token(
     auth: Optional[HTTPAuthorizationCredentials] = Depends(auth_scheme),
 ) -> str:
     # Simulate a database query to find a known token
-    controller = SessionController()
-    if auth is None or controller.session_expired(token=auth.credentials):
+
+    if auth is None or sessionController.session_expired(token=auth.credentials):
         raise UnauthorizedAPI()
     return auth.credentials
 
@@ -55,7 +55,7 @@ def get_password_hash(password):
 def authenticate_user(email: str, password: str):
     base = UserController()
 
-    user = base.get_filter('email', email, UserDBDTO)
+    user = base.get_filter('email', email, UserDTO)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):

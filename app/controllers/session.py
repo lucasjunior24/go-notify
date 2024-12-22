@@ -18,3 +18,7 @@ class SessionController(BaseController):
       expire = session.expires_at.replace(tzinfo=None) <= now
 
       return expire
+  
+
+
+sessionController = SessionController()

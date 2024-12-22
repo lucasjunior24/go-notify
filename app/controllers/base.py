@@ -44,6 +44,16 @@ class BaseController[T]:
     result_dto = [self.__create_dto(result, self.dto) for result in result_db]
     return result_dto
   
+  def get_all(self, dto: U | None = None):
+    data = self.collection.find()
+    if dto:
+      result_dto = [self.__create_dto(result, dto) for result in data]
+      return result_dto
+    result_dto = [self.__create_dto(result, self.dto) for result in data]
+    return result_dto
+  
+    
+
   @staticmethod
   def __create_dto(data: dict, dto: V) -> V:
     return dto(**data)

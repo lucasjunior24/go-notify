@@ -7,4 +7,7 @@ create exception to all status codes
 
 create  database model generic with generic crud
 
-to do filter and paginate in get all
+to do filter and pagination in get all
+
+updated architecture
+

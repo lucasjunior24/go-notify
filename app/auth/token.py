@@ -6,12 +6,14 @@ import jwt
 from passlib.context import CryptContext
 
 from app.controllers.session import sessionController
-from app.controllers.user import UserController
+from app.controllers.user import userController
 from app.db.models.user import UserDTO
 from app.util.exception import UnauthorizedAPI
 
+
 class AccessTokenBearer(HTTPBearer):
-  pass
+    pass
+
 
 SECRET_KEY = "45debe25ff6e17a8bed5b867df33183a3b44c280ef5177b51677e48866a23816"
 ALGORITHM = "HS256"
@@ -43,7 +45,6 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt, expire
 
 
-
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
@@ -53,13 +54,10 @@ def get_password_hash(password):
 
 
 def authenticate_user(email: str, password: str):
-    base = UserController()
+    user = userController.get_filter("email", email, UserDTO)
 
-    user = base.get_filter('email', email, UserDTO)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
         return False
     return user
-
-

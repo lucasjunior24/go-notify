@@ -3,7 +3,7 @@ from typing import Annotated
 from app.controllers.session import sessionController
 from app.controllers.user import userController
 from app.db.models.user import UserDTO
-from app.dtos.session import SessionDBDTO
+from app.dtos.session import SessionDTO
 
 from app.views import app
 from fastapi.security import HTTPAuthorizationCredentials
@@ -36,14 +36,14 @@ async def login_for_access_token(
         data={"sub": user.email, "scopes": form_data.scopes},
         expires_delta=access_token_expires,
     )
-    session = SessionDBDTO(
+    session = SessionDTO(
         token=access_token, expires_at=expire, user_name=user.name, user_id=str(user.id)
     )
     sessionController.create(session)
     return Token(access_token=access_token, token_type="bearer")
 
 
-@app.get("/sessions", response_model=ResponseModelDTO[list[SessionDBDTO]])
+@app.get("/sessions", response_model=ResponseModelDTO[list[SessionDTO]])
 async def read_users_me():
 
     all_sessions = sessionController.get_all()

@@ -1,8 +1,10 @@
-from typing import TypeVar
+from typing import Optional, TypeVar
 from bson import ObjectId
-from app.db.connection import database
+from pymongo import MongoClient
 from app.dtos.base import DTO
+from app.util.config import DB_NAME
 from app.util.exception import NotFoundedAPI
+from pymongo.synchronous.collection import Collection
 
 T = TypeVar("T")
 U = TypeVar("U")
@@ -10,10 +12,10 @@ V = TypeVar("V")
 
 
 class BaseController[T]:
-    def __init__(self, collection: str, dto: T):
-        self.collection_name = collection
+    def __init__(self, collection_name: str, dto: T, collection: Collection):
+        self.collection_name = collection_name
         self.dto = dto
-        self.collection = database[self.collection_name]
+        self.collection = collection
 
     def create(self, dto: type[DTO]):
         dto_json = dto.model_dump(exclude=["id"], mode="json")

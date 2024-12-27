@@ -11,3 +11,12 @@ to do filter and pagination in get all
 
 updated architecture
 
+criar um ApplicationManager para gerenciar controllers e sessão
+
+criar um Startup para iniciar a aplicação
+
+criar um test com o mock pras controllers e testando o ApplicationManager
+
+separar routes de user, product e sessions
+
+fazer integração com outra api

@@ -9,14 +9,17 @@ from typing import Annotated
 from app.views import app
 from fastapi.middleware.cors import CORSMiddleware
 
+
 async def get_query_token(token: str):
     if token != "jessica":
         raise HTTPException(status_code=400, detail="No Jessica token provided")
+
+
 async def get_token_header(x_token: Annotated[str, Header()]):
     if x_token != "fake-super-secret-token":
         raise HTTPException(status_code=400, detail="X-Token header invalid")
-    
-    
+
+
 origins = [
     "http://localhost",
     "http://localhost:5173",
@@ -34,4 +37,3 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-

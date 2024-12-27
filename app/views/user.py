@@ -1,10 +1,8 @@
 from datetime import timedelta
 from typing import Annotated
-from app.controllers.session import sessionController
-from app.controllers.user import userController
 from app.db.models.user import UserDTO
 from app.dtos.session import SessionDTO
-
+from app.application_manager import applicationManager
 from app.views import app
 from fastapi.security import HTTPAuthorizationCredentials
 from fastapi import Depends, HTTPException
@@ -39,14 +37,14 @@ async def login_for_access_token(
     session = SessionDTO(
         token=access_token, expires_at=expire, user_name=user.name, user_id=str(user.id)
     )
-    sessionController.create(session)
+    applicationManager.session_controller.create(session)
     return Token(access_token=access_token, token_type="bearer")
 
 
 @app.get("/sessions", response_model=ResponseModelDTO[list[SessionDTO]])
 async def read_users_me():
 
-    all_sessions = sessionController.get_all()
+    all_sessions = applicationManager.session_controller.get_all()
     return ResponseDTO(data=all_sessions, message="success")
 
 
@@ -60,7 +58,7 @@ async def read_system_status(
     token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], email: str
 ):
 
-    data = userController.get_filter("email", email)
+    data = applicationManager.user_controller.get_filter("email", email)
     return ResponseDTO(data=data)
 
 
@@ -69,14 +67,14 @@ async def read_system_status(
     token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], user_id: str
 ):
 
-    data = userController.get_user_with_sessions(user_id)
+    data = applicationManager.user_controller.get_user_with_sessions(user_id)
     return ResponseDTO(data=data)
 
 
 @app.get("/user/refactor", response_model=ResponseModelDTO[UserDTO])
 async def read_system_status(use_id: str):
 
-    data = userController.get_by_id(use_id)
+    data = applicationManager.user_controller.get_by_id(use_id)
     return ResponseDTO(data=data)
 
 
@@ -90,6 +88,6 @@ async def create(
 ):
     hash = get_password_hash(user.password)
     user = UserDTO(email=user.email, name=user.username, hashed_password=hash)
-    data = userController.create(user)
+    data = applicationManager.user_controller.create(user)
 
     return ResponseDTO(data=data)

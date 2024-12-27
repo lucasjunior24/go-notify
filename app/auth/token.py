@@ -4,9 +4,9 @@ from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 import jwt
 from passlib.context import CryptContext
-
+from app.application_manager import applicationManager
 from app.controllers.session import sessionController
-from app.controllers.user import userController
+
 from app.db.models.user import UserDTO
 from app.util.exception import UnauthorizedAPI
 
@@ -54,7 +54,7 @@ def get_password_hash(password):
 
 
 def authenticate_user(email: str, password: str):
-    user = userController.get_filter("email", email, UserDTO)
+    user = applicationManager.user_controller.get_filter("email", email, UserDTO)
 
     if not user:
         return False

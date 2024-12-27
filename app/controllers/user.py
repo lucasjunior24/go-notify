@@ -4,8 +4,8 @@ from app.dtos.user import UserDBSessionDTO
 
 
 class UserController(BaseController[UserDTO]):
-    def __init__(self, collection="user", dto: UserDTO = UserDTO):
-        super().__init__(collection, dto)
+    def __init__(self, collection_name="user", dto: UserDTO = UserDTO, collection=None):
+        super().__init__(collection_name, dto, collection)
 
     def get_user_with_sessions(self, user_id: str):
         users = self.get_with_query(
@@ -13,6 +13,3 @@ class UserController(BaseController[UserDTO]):
             dto=UserDBSessionDTO,
         )
         return users
-
-
-userController = UserController()

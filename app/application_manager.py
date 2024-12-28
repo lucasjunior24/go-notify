@@ -1,18 +1,28 @@
-from pymongo import MongoClient
-from typing import Optional
-from app.controllers.session import SessionController
-from app.controllers.user import UserController
-from app.util.config import DB_NAME
-from app.db.connection import client
+from typing import TypeVar, Generic
+
+from app.controllers.base import BaseController
+
+
+GenericController = TypeVar("GenericController")
 
 
 class ApplicationManager:
-    def __init__(self, _client: Optional[MongoClient] = None):
-        if _client is None:
-            _client = client
-        database = _client.get_database(DB_NAME)
-        self.user_controller = UserController(collection=database["user"])
-        self.session_controller = SessionController(collection=database["session"])
+    _instance = None
 
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(ApplicationManager, cls).__new__(cls)
+        return cls._instance
 
-applicationManager = ApplicationManager()
+    def __init__(self):
+        self.control = {}
+
+    @staticmethod
+    def get(controller: type[GenericController]) -> GenericController:
+        apliication = ApplicationManager()
+        return apliication.create_instance(controller)
+
+    def create_instance(self, controller: BaseController):
+        if self.control.get(controller.collection_name) is None:
+            self.control[controller.collection_name] = controller()
+        return self.control[controller.collection_name]

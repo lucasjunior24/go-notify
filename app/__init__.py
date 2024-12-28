@@ -3,10 +3,8 @@ from fastapi import Header, HTTPException
 from app.views.product import product_router
 from app.db import connection
 from app.views.user import app
-from app.views.erros import app
 from typing import Annotated
 
-from app.views import app
 from fastapi.middleware.cors import CORSMiddleware
 
 

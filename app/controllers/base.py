@@ -4,26 +4,32 @@ from pymongo import MongoClient
 from app.dtos.base import DTO
 from app.util.config import DB_NAME
 from app.util.exception import NotFoundedAPI
-from pymongo.synchronous.collection import Collection
+
 
 T = TypeVar("T")
 U = TypeVar("U")
 V = TypeVar("V")
+from app.db.connection import client
 
 
 class BaseController[T]:
-    def __init__(self, collection_name: str, dto: T, collection: Collection):
-        self.collection_name = collection_name
+    collection_name: str
+
+    def __init__(self, dto: T, _client: Optional[MongoClient] = None):
+        if _client is None:
+            _client = client
+        database = _client.get_database(DB_NAME)
         self.dto = dto
-        self.collection = collection
+
+        self.collection = database[self.collection_name]
 
     def create(self, dto: type[DTO]):
         dto_json = dto.model_dump(exclude=["id"], mode="json")
         data = self.collection.insert_one(dto_json)
-        dto = self.get_by_id(id=data.inserted_id, dto=DTO)
-        return dto
+        new_dto = self.get_by_id(id=data.inserted_id, dto=DTO)
+        return new_dto
 
-    def get_filter(self, key: str, value: str, dto: U | T | None = None):
+    def get_filter(self, key: str, value: str, dto: U | T | None = None) -> U | T:
         data = self.collection.find_one({key: value})
         if dto is None:
             dto = self.dto
@@ -35,11 +41,13 @@ class BaseController[T]:
             dto = self.dto
         return self.__create_dto(data, dto)
 
-    def get_with_query(self, data: list[dict], dto: U | T | None = None):
+    def get_with_query(
+        self, data: list[dict], dto: type[U] | T | None = None
+    ) -> list[T | U]:
         result_db = list(self.collection.aggregate(data))
         return self.validate_list_dto(result_db, dto)
 
-    def get_all(self, dto: U | T | None = None):
+    def get_all(self, dto: type[U] | T | None = None) -> list[T | U]:
         data = list(self.collection.find())
         return self.validate_list_dto(data, dto)
 

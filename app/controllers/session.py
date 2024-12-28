@@ -4,8 +4,10 @@ from app.dtos.session import SessionDTO
 
 
 class SessionController(BaseController[SessionDTO]):
-    def __init__(self, collection_name="session", dto=SessionDTO, collection=None):
-        super().__init__(collection_name, dto, collection)
+    collection_name = "session"
+
+    def __init__(self, dto=SessionDTO):
+        super().__init__(dto)
 
     def session_expired(self, token: str) -> bool:
         type, token = token.split(" ")
@@ -16,6 +18,3 @@ class SessionController(BaseController[SessionDTO]):
         expire = session.expires_at.replace(tzinfo=None) <= now
 
         return expire
-
-
-sessionController = SessionController()

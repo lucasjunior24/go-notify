@@ -4,9 +4,10 @@ from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 import jwt
 from passlib.context import CryptContext
-from app.application_manager import applicationManager
-from app.controllers.session import sessionController
+from app.application_manager import ApplicationManager
+from app.controllers.session import SessionController
 
+from app.controllers.user import UserController
 from app.db.models.user import UserDTO
 from app.util.exception import UnauthorizedAPI
 
@@ -28,7 +29,7 @@ async def get_token(
     auth: Optional[HTTPAuthorizationCredentials] = Depends(auth_scheme),
 ) -> str:
     # Simulate a database query to find a known token
-
+    sessionController = ApplicationManager.get(SessionController)
     if auth is None or sessionController.session_expired(token=auth.credentials):
         raise UnauthorizedAPI()
     return auth.credentials
@@ -54,7 +55,8 @@ def get_password_hash(password):
 
 
 def authenticate_user(email: str, password: str):
-    user = applicationManager.user_controller.get_filter("email", email, UserDTO)
+    user_controller = ApplicationManager.get(UserController)
+    user = user_controller.get_filter("email", email, UserDTO)
 
     if not user:
         return False

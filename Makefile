@@ -11,3 +11,14 @@ deploy-teste:
 	docker build -t go-notify-local .
 	docker-compose -f docker-compose.yml up -d
 
+test:
+	python -m pytest tests
+
+coverage-main:
+	python -m pytest --cov=app tests
+
+# coverage:
+# 	py.test app/application_manager.py --cov-report xml:cov.xml --cov .
+	
+coverage:
+	py.test app/application_manager.py --cov-report xml:cov.xml --cov=app tests

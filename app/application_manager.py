@@ -1,4 +1,4 @@
-from typing import TypeVar, Generic
+from typing import Optional, TypeVar
 
 from app.controllers.base import BaseController
 
@@ -18,11 +18,13 @@ class ApplicationManager:
         self.control = {}
 
     @staticmethod
-    def get(controller: type[GenericController]) -> GenericController:
+    def get(
+        controller: type[GenericController], db_name: Optional[str] = None
+    ) -> GenericController:
         apliication = ApplicationManager()
-        return apliication.create_instance(controller)
+        return apliication.create_instance(controller, db_name)
 
-    def create_instance(self, controller: BaseController):
+    def create_instance(self, controller: BaseController, db_name: Optional[str]):
         if self.control.get(controller.collection_name) is None:
-            self.control[controller.collection_name] = controller()
+            self.control[controller.collection_name] = controller(db_name=db_name)
         return self.control[controller.collection_name]

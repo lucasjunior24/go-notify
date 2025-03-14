@@ -1,6 +1,5 @@
-from typing import Optional, TypeVar
+from typing import TypeVar
 from bson import ObjectId
-from pymongo import MongoClient
 from app.dtos.base import DTO
 from app.util.config import DB_NAME
 from app.util.exception import NotFoundedAPI
@@ -15,10 +14,9 @@ from app.db.connection import client
 class BaseController[T]:
     collection_name: str
 
-    def __init__(self, dto: T, _client: Optional[MongoClient] = None):
-        if _client is None:
-            _client = client
-        database = _client.get_database(DB_NAME)
+    def __init__(self, dto: T, db_name: str | None = None):
+        self.db_name = DB_NAME if db_name is None else db_name
+        database = client.get_database(self.db_name)
         self.dto = dto
 
         self.collection = database[self.collection_name]

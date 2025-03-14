@@ -5,4 +5,9 @@
   },
   "editor.formatOnType": true,
   "editor.tabSize": 2,
+  "python.testing.pytestArgs": [
+    "tests"
+  ],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
 }

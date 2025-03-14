@@ -9,7 +9,6 @@ services:
     networks:
       - notify-network
 
-
   go-notify-local:
     restart: always
     image: go-notify-local

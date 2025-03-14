@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from app.controllers.base import BaseController
 from app.dtos.session import SessionDTO
 
@@ -6,8 +7,8 @@ from app.dtos.session import SessionDTO
 class SessionController(BaseController[SessionDTO]):
     collection_name = "session"
 
-    def __init__(self, dto=SessionDTO):
-        super().__init__(dto)
+    def __init__(self, dto: SessionDTO = SessionDTO, db_name: str = None):
+        super().__init__(dto, db_name)
 
     def session_expired(self, token: str) -> bool:
         type, token = token.split(" ")

@@ -14,11 +14,11 @@ deploy-teste:
 test:
 	python -m pytest tests
 
-coverage-main:
+cov-total:
 	python -m pytest --cov=app tests
 
 # coverage:
 # 	py.test app/application_manager.py --cov-report xml:cov.xml --cov .
 	
 coverage:
-	py.test app/application_manager.py --cov-report xml:cov.xml --cov=app tests
+	py.test app/__init__.py --cov-report xml:cov.xml --cov=app tests

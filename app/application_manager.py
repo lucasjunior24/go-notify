@@ -23,8 +23,8 @@ class ApplicationManager:
     def get(
         controller: type[GenericController], client: Optional[MongoClient] = None
     ) -> GenericController:
-        apliication = ApplicationManager()
-        return apliication.create_instance(controller, client)
+        application = ApplicationManager()
+        return application.create_instance(controller, client)
 
     def create_instance(
         self, controller: BaseController, _client: Optional[MongoClient]

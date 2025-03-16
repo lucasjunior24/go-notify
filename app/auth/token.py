@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta, timezone
-from typing import Optional
+from typing import Any, Optional, Protocol
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 import jwt
 from passlib.context import CryptContext
+from pymongo import MongoClient
 from app.application_manager import ApplicationManager
 from app.controllers.session import SessionController
 
@@ -25,7 +26,25 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 auth_scheme = HTTPBearer()
 
 
-async def get_token(
+class ValidateToken(Protocol):
+    def __init__(
+        self,
+        auth: Optional[HTTPAuthorizationCredentials] = Depends(auth_scheme),
+    ) -> str:
+
+        # Simulate a database query to find a known token
+        self.auth = auth
+        self.sessionController = ApplicationManager.get(SessionController)
+
+    def __str__(self):
+        if self.auth is None or self.sessionController.session_expired(
+            token=self.auth.credentials
+        ):
+            raise UnauthorizedAPI()
+        return self.auth.credentials
+
+
+def get_token(
     auth: Optional[HTTPAuthorizationCredentials] = Depends(auth_scheme),
 ) -> str:
     # Simulate a database query to find a known token

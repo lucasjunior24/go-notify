@@ -3,7 +3,7 @@ from bson import ObjectId
 from mongomock import MongoClient
 from app.dtos.base import DTO
 from app.util.config import DB_NAME
-from app.util.exception import NotFoundedAPI
+from app.util.exception import NotFoundAPI
 
 
 T = TypeVar("T")
@@ -59,5 +59,5 @@ class BaseController[T]:
     @staticmethod
     def __create_dto(data: dict, dto: V) -> V:
         if data is None:
-            raise NotFoundedAPI()
+            raise NotFoundAPI()
         return dto(**data)

@@ -14,10 +14,10 @@ from fastapi.security import (
 
 from app.auth.token import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
+    ValidateToken,
     authenticate_user,
     create_access_token,
     get_password_hash,
-    get_token,
 )
 
 from app.dtos.response import ResponseDTO, ResponseModelDTO
@@ -58,7 +58,7 @@ async def read_own_items():
 
 @app.get("/user", response_model=ResponseModelDTO[UserDTO])
 async def read_system_status(
-    token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], email: str
+    token: Annotated[HTTPAuthorizationCredentials, Depends(ValidateToken)], email: str
 ):
     user_controller = ApplicationManager.get(UserController)
     data = user_controller.get_filter("email", email)
@@ -67,8 +67,9 @@ async def read_system_status(
 
 @app.get("/user/sessions", response_model=ResponseModelDTO[list[UserDBSessionDTO]])
 async def read_system_status(
-    token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], user_id: str
+    token: Annotated[HTTPAuthorizationCredentials, Depends(ValidateToken)], user_id: str
 ):
+    print(token)
     user_controller = ApplicationManager.get(UserController)
     data = user_controller.get_user_with_sessions(user_id)
     return ResponseDTO(data=data)

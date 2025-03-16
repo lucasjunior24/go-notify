@@ -20,7 +20,7 @@ class UnauthorizedAPI(IExceptionAPI):
     status_code: int = 401
 
 
-class NotFoundedAPI(IExceptionAPI):
+class NotFoundAPI(IExceptionAPI):
     data: str | None = None
     message: str = HTTPStatus(404).description
     status: str = HTTPStatus(404).phrase

@@ -2,6 +2,7 @@
 
 from app.application_manager import ApplicationManager
 from app.controllers.session import SessionController
+from tests.setup.database import mock_client
 
 
 def func(x):
@@ -13,7 +14,6 @@ def test_answer():
 
 
 def test_application():
-    DB_NAME = "unit_test_go_notify"
-    sessionController = ApplicationManager.get(SessionController, DB_NAME)
+    sessionController = ApplicationManager.get(SessionController, mock_client)
     assert sessionController.collection_name == SessionController.collection_name
-    assert sessionController.db_name == DB_NAME
+    assert sessionController.client == mock_client

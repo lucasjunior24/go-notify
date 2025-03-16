@@ -1,5 +1,7 @@
 from typing import Optional, TypeVar
 
+from mongomock import MongoClient
+
 from app.controllers.base import BaseController
 
 
@@ -19,12 +21,14 @@ class ApplicationManager:
 
     @staticmethod
     def get(
-        controller: type[GenericController], db_name: Optional[str] = None
+        controller: type[GenericController], client: Optional[MongoClient] = None
     ) -> GenericController:
         apliication = ApplicationManager()
-        return apliication.create_instance(controller, db_name)
+        return apliication.create_instance(controller, client)
 
-    def create_instance(self, controller: BaseController, db_name: Optional[str]):
+    def create_instance(
+        self, controller: BaseController, _client: Optional[MongoClient]
+    ):
         if self.control.get(controller.collection_name) is None:
-            self.control[controller.collection_name] = controller(db_name=db_name)
+            self.control[controller.collection_name] = controller(_client=_client)
         return self.control[controller.collection_name]

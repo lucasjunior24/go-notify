@@ -1,5 +1,7 @@
 from datetime import datetime
 from typing import Optional
+
+from pymongo import MongoClient
 from app.controllers.base import BaseController
 from app.dtos.session import SessionDTO
 
@@ -7,8 +9,10 @@ from app.dtos.session import SessionDTO
 class SessionController(BaseController[SessionDTO]):
     collection_name = "session"
 
-    def __init__(self, dto: SessionDTO = SessionDTO, db_name: str = None):
-        super().__init__(dto, db_name)
+    def __init__(
+        self, dto: SessionDTO = SessionDTO, _client: MongoClient | None = None
+    ):
+        super().__init__(dto, _client)
 
     def session_expired(self, token: str) -> bool:
         type, token = token.split(" ")

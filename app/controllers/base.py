@@ -1,5 +1,6 @@
-from typing import TypeVar
+from typing import Optional, TypeVar
 from bson import ObjectId
+from mongomock import MongoClient
 from app.dtos.base import DTO
 from app.util.config import DB_NAME
 from app.util.exception import NotFoundedAPI
@@ -14,17 +15,17 @@ from app.db.connection import client
 class BaseController[T]:
     collection_name: str
 
-    def __init__(self, dto: T, db_name: str | None = None):
-        self.db_name = DB_NAME if db_name is None else db_name
-        database = client.get_database(self.db_name)
+    def __init__(self, dto: T, _client: Optional[MongoClient] | None = None):
+        self.client = client if _client is None else _client
+        database = self.client.get_database(DB_NAME)
         self.dto = dto
 
         self.collection = database[self.collection_name]
 
-    def create(self, dto: type[DTO]):
-        dto_json = dto.model_dump(exclude=["id"], mode="json")
+    def create(self, data: DTO):
+        dto_json = data.model_dump(exclude=["id"], mode="json")
         data = self.collection.insert_one(dto_json)
-        new_dto = self.get_by_id(id=data.inserted_id, dto=DTO)
+        new_dto = self.get_by_id(id=data.inserted_id, dto=self.dto)
         return new_dto
 
     def get_filter(self, key: str, value: str, dto: U | T | None = None) -> U | T:

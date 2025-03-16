@@ -7,3 +7,4 @@ mongoengine==0.29.1
 marshmallow-mongoengine==0.31.2
 pytest==8.3.5
 pytest-cov==6.0.0
+mongomock==4.3.0

@@ -5,17 +5,18 @@ from dotenv import load_dotenv
 load_dotenv()
 from efipay import EfiPay
 
-CLIENT_ID = os.getenv("CLIENT_ID")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-CERTIFICATE_PATH = os.getenv("CERTIFICATE_PATH")
+CLIENT_ID = os.getenv("PROD_CLIENT_ID")
+CLIENT_SECRET = os.getenv("PROD_CLIENT_SECRET")
+CERTIFICATE_PATH = os.getenv("PROD_CERTIFICATE_PATH")
 
+PROD_CHAVE_PIX = os.getenv("PROD_CHAVE_PIX")
 
 # PRODUÇÃO = false
 # HOMOLOGAÇÃO = true
 credentials = {
     "client_id": CLIENT_ID,
     "client_secret": CLIENT_SECRET,
-    "sandbox": True,
+    "sandbox": False,
     "certificate": CERTIFICATE_PATH,
 }
 print(credentials)
@@ -26,7 +27,7 @@ body = {
     "calendario": {"expiracao": 3600},
     "devedor": {"cpf": "12345678909", "nome": "Francisco da Silva"},
     "valor": {"original": "0.45"},
-    "chave": "71cdf9ba-c695-4e3c-b010-abb521a3f1be",
+    "chave": PROD_CHAVE_PIX,
     "solicitacaoPagador": "Cobrança dos serviços prestados.",
 }
 

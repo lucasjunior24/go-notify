@@ -42,11 +42,11 @@ class BaseController[T]:
 
     def get_with_query(
         self, data: list[dict], dto: type[U] | T | None = None
-    ) -> list[T | U]:
+    ) -> list[U | T]:
         result_db = list(self.collection.aggregate(data))
         return self.validate_list_dto(result_db, dto)
 
-    def get_all(self, dto: type[U] | T | None = None) -> list[T | U]:
+    def get_all(self, dto: type[U] | T | None = None) -> list[U | T]:
         data = list(self.collection.find())
         return self.validate_list_dto(data, dto)
 

@@ -1,5 +1,5 @@
 from mongomock import MongoClient as MongoMockClient
 
-from app.util.config import DB_URL
+DB_URL = f"mongodb://localhost"
 
 mock_client = MongoMockClient(DB_URL)

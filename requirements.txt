@@ -10,3 +10,6 @@ pytest-cov==6.0.0
 mongomock==4.3.0
 pytest_asyncio==0.25.3
 efipay==1.0.3 
+
+
+basic-components-fpp==0.0.1

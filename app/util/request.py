@@ -2,7 +2,7 @@ from typing import TypeVar
 import requests
 
 
-from app.util.exception import ExceptionAPI
+from basic_components_fpp.exception import ExceptionAPI
 
 T = TypeVar("T")
 

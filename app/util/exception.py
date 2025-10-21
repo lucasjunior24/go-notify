@@ -1,27 +1,9 @@
-from dataclasses import dataclass
+from basic_components_fpp.exception import IExceptionAPI
 from http import HTTPStatus
 
 
-@dataclass
-class IExceptionAPI(Exception): ...
-
-
-class ExceptionAPI(IExceptionAPI):
+class NewTestAPI(IExceptionAPI):
     data: str | None = None
-    message: str = HTTPStatus(500).description
-    status: str = HTTPStatus(500).phrase
-    status_code: int = 500
-
-
-class UnauthorizedAPI(IExceptionAPI):
-    data: str | None = None
-    message: str = HTTPStatus(401).description
-    status: str = HTTPStatus(401).phrase
-    status_code: int = 401
-
-
-class NotFoundAPI(IExceptionAPI):
-    data: str | None = None
-    message: str = HTTPStatus(404).description
-    status: str = HTTPStatus(404).phrase
-    status_code: int = 404
+    message: str = HTTPStatus(450).description
+    status: str = HTTPStatus(450).phrase
+    status_code: int = 450

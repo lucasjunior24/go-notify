@@ -22,3 +22,7 @@ cov-total:
 	
 coverage:
 	py.test app/__init__.py --cov-report xml:cov.xml --cov=app tests
+
+
+deploy-nginx:
+	docker-compose -f compose/compose-local/nginx.yaml up

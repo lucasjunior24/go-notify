@@ -10,7 +10,7 @@ from app.controllers.session import SessionController
 
 from app.controllers.user import UserController
 from app.db.models.user import UserDTO
-from app.util.exception import UnauthorizedAPI
+from basic_components_fpp.exception import UnauthorizedAPI
 
 
 class AccessTokenBearer(HTTPBearer):

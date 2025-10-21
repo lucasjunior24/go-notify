@@ -1,6 +1,6 @@
 from http import HTTPStatus
 from app.dtos.response import ResponseDTO
-from app.util.exception import IExceptionAPI, UnauthorizedAPI
+from basic_components_fpp.exception import IExceptionAPI, UnauthorizedAPI
 from fastapi.encoders import jsonable_encoder
 
 from fastapi import FastAPI, Request

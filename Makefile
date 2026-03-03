@@ -7,7 +7,7 @@ deploy-develop:
 	docker-compose -f compose/compose-develop/docker-compose.yaml up -d
 
 
-deploy-teste:
+deploy-test:
 	docker build -t go-notify-local .
 	docker-compose -f docker-compose.yml up -d
 

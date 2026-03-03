@@ -1,11 +1,39 @@
+version: '3.8'
+
 services:
+  mongo:
+    restart: always
+    image: mongo:7.0.6
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - notify-network
+    volumes:
+      - mongo_data:/data/db
+
   go_notify:
-    build: .
-    container_name: go_notify_develop
-    command: sh -c "uvicorn main:app --host 0.0.0.0 --port 8008"
+    restart: always
+    image: go_notify_develop
+    container_name: go_notify
+    command: sh -c "uvicorn main:app --reload --host 0.0.0.0 --port 8008"
     ports:
       - "8008:8008"
-    # env_file:
-    #   - ../../.env
+    env_file:
+      - ../../.env
     volumes:
       - ../../:/app
+    networks:
+      - notify-network
+    depends_on:
+      - mongo
+
+
+volumes:
+  mongo_data:     
+    
+networks: 
+  notify-network:
+    name: notify-network
+    driver: bridge
+    external: true

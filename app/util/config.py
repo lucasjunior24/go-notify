@@ -18,6 +18,8 @@ DB_NAME = os.getenv("DB_NAME", "notify")
 IP_WITH_PORT_DB = os.getenv("IP_WITH_PORT_DB")
 CHAT_API_URL = os.getenv("CHAT_API_URL")
 DB_URL = os.getenv("DB_URL")
+
+
 if DB_URL is None:
     DB_URL = f"mongodb://{IP_WITH_PORT_DB}"
 # NEW_DB_URL = f"mongodb+srv://{USER_DB_KEY}:{PASSWORD_DB_KEY}@{DB_URL}/?retryWrites=true&w=majority&appName={APP_NAME_KEY}"

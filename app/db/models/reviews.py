@@ -1,9 +1,8 @@
-
 from mongoengine import *
+from pydantic import Field
 
-
-class Review(EmbeddedDocument):
-    score = StringField(required=True)
-    comment = StringField(max_length=50, required=True)
-    photo = StringField(max_length=100, required=True)
-    
+from app.dtos.base import DTO
+class ReviewDTO(DTO):
+    score: str = Field(default="")
+    comment: str = Field(default="")
+    photo: str = Field(default="")

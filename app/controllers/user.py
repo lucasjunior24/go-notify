@@ -1,4 +1,3 @@
-from typing import Optional
 from pymongo import MongoClient
 from app.controllers.base import BaseController
 from app.db.models.user import UserDTO

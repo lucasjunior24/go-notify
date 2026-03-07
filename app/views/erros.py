@@ -1,4 +1,5 @@
 from http import HTTPStatus
+import app
 from app.dtos.response import ResponseDTO
 from basic_components_fpp.exception import IExceptionAPI, UnauthorizedAPI
 from fastapi.encoders import jsonable_encoder
@@ -13,9 +14,8 @@ class UnicornException(Exception):
 
 
 def midle_erros(app: FastAPI):
-    @app.exception_handler(IExceptionAPI)
     @app.exception_handler(Exception)
-    async def exception_handler(request: Request, exc: IExceptionAPI):
+    async def exception_handler(request: Request, exc: Exception):
         if exc.args:
             message = exc.args[0]
             status = "Internal Server Error"

@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends
 
 from app.auth.token import get_token
 from app.dtos.response import (
-    ProductModelDTO,
     ResponseDTO,
     ResponseModelDTO,
 )
@@ -18,12 +17,12 @@ chat_ai_router = APIRouter(
 )
 
 
-@chat_ai_router.get("", response_model=ResponseModelDTO[ProductModelDTO])
+@chat_ai_router.get("", response_model=ResponseModelDTO[str])
 async def read_system_status(key: str, name: str):
     return ResponseDTO(data=key, message="success")
 
 
-@chat_ai_router.get("/all", response_model=ResponseModelDTO[list[ProductModelDTO]])
+@chat_ai_router.get("/all", response_model=ResponseModelDTO[list[str]])
 async def get_all():
     return ResponseDTO(data=[], message="success")
 

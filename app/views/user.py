@@ -18,6 +18,7 @@ from app.auth.token import (
     authenticate_user,
     create_access_token,
     get_password_hash,
+    get_token,
 )
 
 from app.dtos.response import ResponseDTO, ResponseModelDTO
@@ -65,9 +66,9 @@ async def read_system_status(
     return ResponseDTO(data=data)
 
 
-@app.get("/user/sessions", response_model=ResponseModelDTO[list[UserDBSessionDTO]])
+@app.get("/user/session", response_model=ResponseModelDTO[list[UserDBSessionDTO]])
 async def read_system_status(
-    token: Annotated[HTTPAuthorizationCredentials, Depends(ValidateToken)], user_id: str
+    token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], user_id: str
 ):
     print(token)
     user_controller = ApplicationManager.get(UserController)

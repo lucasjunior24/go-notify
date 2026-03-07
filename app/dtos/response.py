@@ -2,6 +2,10 @@ from http import HTTPStatus
 from typing import Generic, Optional, TypeVar
 
 from pydantic import BaseModel, ConfigDict
+from pydantic.v1 import Field
+
+from app.dtos.base import BaseDTO, CustomObjectId
+
 
 T = TypeVar("T")
 
@@ -19,7 +23,7 @@ class ResponseModelDTO(BaseModel, Generic[T]):
     status: str = "success"
 
 
-class ReviewDTO(BaseModel):
+class CreateReviewDTO(BaseModel):
     score: str
     comment: str
     photo: str
@@ -29,14 +33,12 @@ class CreateProductDTO(BaseModel):
     name: str
     price: str
     description: str
-    review: ReviewDTO
+    reviews: list[CreateReviewDTO] = Field(default_factory=list)
 
 
-class ProductModelDTO(BaseModel):
+class EditReviewDTO(CreateReviewDTO):
     id: str
-    name: str
-    price: str
-    description: str
-    created_at: str
-    updated_at: str
-    reviews: Optional[list[ReviewDTO]] = None
+
+
+class EditProductDTO(CreateProductDTO):
+    reviews: list[EditReviewDTO] = Field(default_factory=list)

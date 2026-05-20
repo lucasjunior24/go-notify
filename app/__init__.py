@@ -2,6 +2,7 @@ from fastapi import Header, HTTPException
 
 from app.views.product import product_router
 from app.views.chat import chat_ai_router
+from app.views.session import session_router
 from app.db import connection
 from app.views.user import app
 from typing import Annotated
@@ -30,6 +31,7 @@ origins = [
 
 app.include_router(product_router)
 app.include_router(chat_ai_router)
+app.include_router(session_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

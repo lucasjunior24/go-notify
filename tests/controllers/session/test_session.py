@@ -1,26 +1,24 @@
-from datetime import datetime, timezone
-
 from fastapi.security import HTTPAuthorizationCredentials
 from app.application_manager import ApplicationManager
 from app.auth.token import ValidateToken
 from app.controllers.session import SessionController
-from app.dtos.session import SessionDTO
+
 from tests.controllers.session.variables import (
     BEARER_TOKEN_TEST,
     SESSION_DTO_TEST,
     TOKEN_TEST,
 )
-from tests.setup.database import mock_client
+from tests.setup.database import mock_client_db
 
 
 class TestSession:
-    sessionController = ApplicationManager.get(SessionController, mock_client)
+    sessionController = ApplicationManager.get(SessionController, mock_client_db)
     session_dto = SESSION_DTO_TEST
 
     def test_init_session_controller(self):
         collection_name = self.sessionController.collection_name
         assert collection_name == SessionController.collection_name
-        assert self.sessionController.client == mock_client
+        assert self.sessionController.client == mock_client_db
 
     def test_create_session(self):
         result = self.sessionController.create(self.session_dto)

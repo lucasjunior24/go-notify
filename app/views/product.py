@@ -54,7 +54,6 @@ async def create_product(
     product_dto = ProductDTO(**product.model_dump())
     for review in product_dto.reviews:
         review.id = CustomObjectId()
-
     new_product = product_controller.create(product_dto)
     return ResponseDTO(data=new_product, message="success")
 

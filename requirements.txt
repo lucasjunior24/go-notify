@@ -14,3 +14,4 @@ efipay==1.0.3
 
 basic-components-fpp==0.0.1
 python-socketio==5.16.1
+pandas

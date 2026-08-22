@@ -15,7 +15,7 @@ class SessionController(BaseController[SessionDTO]):
         super().__init__(dto, _client)
 
     def session_expired(self, token: str) -> bool:
-        type, token = token.split(" ")
+        _, token = token.split(" ")
         session: SessionDTO = self.get_filter("token", token)
         if session is None:
             return True

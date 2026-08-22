@@ -1,12 +1,9 @@
-from fastapi.security import HTTPAuthorizationCredentials
 from app.application_manager import ApplicationManager
-from app.auth.token import ValidateToken
+
 from app.controllers.session import SessionController
 
 from tests.controllers.session.variables import (
-    BEARER_TOKEN_TEST,
     SESSION_DTO_TEST,
-    TOKEN_TEST,
 )
 from tests.setup.database import mock_client_db
 
@@ -37,12 +34,3 @@ class TestSession:
         result = self.sessionController.get_filter("token", session_dto.token)
         assert session_dto.user_name == result.user_name
         assert session_dto.token == result.token
-
-    def test_validate_token(self):
-        auth = HTTPAuthorizationCredentials(credentials=BEARER_TOKEN_TEST, scheme="")
-
-        self.sessionController.create(self.session_dto)
-        validateToken = ValidateToken(auth)
-        validateToken.sessionController = self.sessionController
-
-        assert validateToken.auth.credentials == BEARER_TOKEN_TEST

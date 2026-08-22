@@ -1,11 +1,10 @@
 from typing import Optional, TypeVar
 from bson import ObjectId
-from mongomock import collection
+
 from pymongo import MongoClient
 from app.dtos.base import DTO
 from app.util.config import DB_NAME
 from basic_components_fpp.exception import NotFoundAPI
-
 
 T = TypeVar("T")
 U = TypeVar("U")

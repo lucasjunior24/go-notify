@@ -18,6 +18,8 @@ DB_NAME = os.getenv("DB_NAME", "notify")
 IP_WITH_PORT_DB = os.getenv("IP_WITH_PORT_DB")
 CHAT_API_URL = os.getenv("CHAT_API_URL")
 DB_URL = os.getenv("DB_URL")
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
 
 
 if DB_URL is None:

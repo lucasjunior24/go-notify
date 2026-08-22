@@ -159,3 +159,4 @@ infra/
 
 cov.xml
 
+.coverage

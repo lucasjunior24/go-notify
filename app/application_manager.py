@@ -4,7 +4,6 @@ from mongomock import MongoClient
 
 from app.controllers.base import BaseController
 
-
 GenericController = TypeVar("GenericController")
 
 

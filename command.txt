@@ -11,3 +11,7 @@ docker compose up --build
 
 Makefile
 make deploy-local
+
+docker exec -it go_notify sh
+or 
+docker exec -it go_notify bash

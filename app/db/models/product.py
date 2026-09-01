@@ -1,12 +1,13 @@
+from pydantic import Field
 
-from mongoengine import *
 
-from app.db.models.base import BaseDocument
-from app.db.models.reviews import Review
+from app.db.models.reviews import ReviewDTO
+from app.dtos.base import DTO
 
-class Product(BaseDocument):
-    price = StringField(required=True)
-    name = StringField(max_length=50, required=True)
-    description = StringField(max_length=100, required=True)
 
-    reviews = ListField(EmbeddedDocumentField(Review), default=[])
+class ProductDTO(DTO):
+    price: str = Field(default="")
+    name: str = Field(default="")
+    description: str = Field(default="")
+
+    reviews: list[ReviewDTO] = Field(default_factory=list)

@@ -156,3 +156,8 @@ pip-selfcheck.json
 
 infra
 infra/
+
+cov.xml
+
+.coverage
+.coverage*

@@ -3,10 +3,14 @@ pydantic==2.8.0
 pyjwt==2.10.1
 passlib[bcrypt]==1.7.4
 bcrypt==4.0.1
-mongoengine==0.29.1
-marshmallow-mongoengine==0.31.2
+
+
 pytest==8.3.5
 pytest-cov==6.0.0
 mongomock==4.3.0
 pytest_asyncio==0.25.3
-efipay==1.0.3 
+
+
+
+basic-components-fpp==0.0.1
+pandas

@@ -7,18 +7,17 @@ deploy-develop:
 	docker-compose -f compose/compose-develop/docker-compose.yaml up -d
 
 
-deploy-teste:
+deploy-test:
 	docker build -t go-notify-local .
 	docker-compose -f docker-compose.yml up -d
 
 test:
-	python -m pytest tests
+	python -m pytest --cov=app tests --cov-report=xml 
 
 cov-total:
 	python -m pytest --cov=app tests
 
-# coverage:
-# 	py.test app/application_manager.py --cov-report xml:cov.xml --cov .
-	
-coverage:
-	py.test app/__init__.py --cov-report xml:cov.xml --cov=app tests
+
+
+deploy-nginx:
+	docker-compose -f compose/compose-local/nginx.yaml up

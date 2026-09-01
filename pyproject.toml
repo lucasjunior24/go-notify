@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "go-notify"
+version = "0.1.0"
+description = "Go Notify - FastAPI application"
+requires-python = ">=3.13"
+dependencies = [
+  "fastapi[standard]==0.113.0",
+  "pydantic==2.8.0",
+  "pyjwt==2.10.1",
+  "passlib[bcrypt]==1.7.4",
+  "bcrypt==4.0.1",
+  "basic-components-fpp==0.0.1",
+  "pandas",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest==8.3.5",
+  "pytest-cov==6.0.0",
+  "mongomock==4.3.0",
+  "pytest_asyncio==0.25.3",
+]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+# ---------------------------------------------------------------------------
+# pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+addopts = "-p no:warnings"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+# Diretórios/arquivos que o pytest não deve coletar como testes
+norecursedirs = [
+  ".venv",
+  ".git",
+  ".pytest_cache",
+  "compose",
+  "app",
+  "tests/setup",
+]
+
+# ---------------------------------------------------------------------------
+# coverage
+# ---------------------------------------------------------------------------
+[tool.coverage.run]
+source = ["app"]
+branch = true
+# Arquivos que não precisam de teste/cobertura
+omit = [
+  "main.py",
+  "debug.py",
+  "app/__init__.py",
+  "app/db/connection.py",
+  "app/views/*",
+  "tests/*",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_lines = [
+  "pragma: no cover",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+  "raise NotImplementedError",
+]

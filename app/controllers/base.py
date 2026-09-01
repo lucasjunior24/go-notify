@@ -1,14 +1,15 @@
 from typing import Optional, TypeVar
 from bson import ObjectId
-from mongomock import MongoClient
+
+from pymongo import MongoClient
 from app.dtos.base import DTO
 from app.util.config import DB_NAME
-from app.util.exception import NotFoundAPI
-
+from basic_components_fpp.exception import NotFoundAPI
 
 T = TypeVar("T")
 U = TypeVar("U")
 V = TypeVar("V")
+
 from app.db.connection import client
 
 
@@ -26,6 +27,13 @@ class BaseController[T]:
         dto_json = data.model_dump(exclude=["id"], mode="json")
         data = self.collection.insert_one(dto_json)
         new_dto = self.get_by_id(id=data.inserted_id, dto=self.dto)
+        return new_dto
+
+    def update(self, id: str, data: DTO):
+        dto_json = data.model_dump(exclude=["id"], mode="json")
+        filter_query = {"_id": ObjectId(id)}
+        data = self.collection.update_one(filter_query, {"$set": dto_json})
+        new_dto = self.get_by_id(id=id, dto=self.dto)
         return new_dto
 
     def get_filter(self, key: str, value: str, dto: U | T | None = None) -> U | T:
@@ -55,6 +63,10 @@ class BaseController[T]:
             dto = self.dto
         result_dto = [self.__create_dto(result, dto) for result in data]
         return result_dto
+
+    def remove(self, id: str) -> bool:
+        data = self.collection.delete_one({"_id": ObjectId(id)})
+        return data.deleted_count > 0
 
     @staticmethod
     def __create_dto(data: dict, dto: V) -> V:

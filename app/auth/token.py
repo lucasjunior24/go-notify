@@ -1,47 +1,29 @@
 from datetime import datetime, timedelta, timezone
-from typing import Any, Optional, Protocol
+from typing import Optional, Protocol
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 import jwt
 from passlib.context import CryptContext
-from pymongo import MongoClient
+
 from app.application_manager import ApplicationManager
 from app.controllers.session import SessionController
 
 from app.controllers.user import UserController
 from app.db.models.user import UserDTO
-from app.util.exception import UnauthorizedAPI
+from basic_components_fpp.exception import UnauthorizedAPI
+
+from app.util.config import ALGORITHM, SECRET_KEY
 
 
 class AccessTokenBearer(HTTPBearer):
     pass
 
 
-SECRET_KEY = "45debe25ff6e17a8bed5b867df33183a3b44c280ef5177b51677e48866a23816"
-ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 auth_scheme = HTTPBearer()
-
-
-class ValidateToken(Protocol):
-    def __init__(
-        self,
-        auth: Optional[HTTPAuthorizationCredentials] = Depends(auth_scheme),
-    ) -> str:
-
-        # Simulate a database query to find a known token
-        self.auth = auth
-        self.sessionController = ApplicationManager.get(SessionController)
-
-    def __str__(self):
-        if self.auth is None or self.sessionController.session_expired(
-            token=self.auth.credentials
-        ):
-            raise UnauthorizedAPI()
-        return self.auth.credentials
 
 
 def get_token(

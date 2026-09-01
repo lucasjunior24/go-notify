@@ -1,16 +1,11 @@
 from http import HTTPStatus
 import app
 from app.dtos.response import ResponseDTO
-from basic_components_fpp.exception import IExceptionAPI, UnauthorizedAPI
+
 from fastapi.encoders import jsonable_encoder
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-
-
-class UnicornException(Exception):
-    def __init__(self, name: str):
-        self.name = name
 
 
 def midle_erros(app: FastAPI):

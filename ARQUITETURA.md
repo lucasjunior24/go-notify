@@ -10,7 +10,7 @@ O nome do projeto (`go_notify`) indica que a aplicação nasceu com foco em **no
 - Gestão de sessões persistidas no banco.
 - CRUD de usuários e produtos (com reviews aninhadas).
 - Integração com serviço externo de chat com IA.
-- Preparação (ainda incompleta) para comunicação em tempo real via WebSocket.
+
 
 A API funciona como **backend** consumido por clientes externos (frontend/outros serviços), seguindo o padrão REST com respostas padronizadas em JSON.
 
@@ -29,7 +29,6 @@ A aplicação segue uma arquitetura **em camadas** (estilo "MVC adaptado"), orga
 | Auth | `app/auth/` | Autenticação, tokens JWT e validação de sessão |
 | DB | `app/db/` | Conexão com o banco de dados (MongoDB) |
 | Util | `app/util/` | Configuração, cliente HTTP e tratamento de exceções |
-| Socket | `app/socket/` | Comunicação em tempo real (esboço) |
 
 ### Fluxo típico de uma requisição
 
@@ -56,7 +55,6 @@ ApplicationManager (singleton) ──► Controller (app/controllers/*)
 - **Banco de Dados:** MongoDB (PyMongo + MongoEngine)
 - **Validação/Serialização:** Pydantic v2
 - **Autenticação:** JWT (PyJWT) + Bcrypt (passlib)
-- **Comunicação em tempo real:** python-socketio (esboço)
 - **Integração HTTP:** requests
 - **Infraestrutura:** Docker + Docker Compose, NGINX (load balancer)
 - **Testes:** pytest, pytest-cov, mongomock, pytest-asyncio
@@ -157,37 +155,27 @@ Isso reduz drasticamente a duplicação de código de persistência.
    - `app/db/models/*` importa `mongoengine` mas o código real de persistência usa PyMongo (`MongoClient`). Isso gera confusão e dependência desnecessária.
 
 4. **Código de exemplo/"morto" em produção:**
-   - `app/auth/session.py` (`ManagerSession`) parece redundante e não é integrado ao fluxo real.
    - `validations/bot.py` é um script de análise de criptomoedas fora do escopo da API.
 
-5. **Duplicação de nomes de funções nas rotas:**
-   - Em `app/views/user.py`, várias funções chamam-se `read_system_status`, o que reduz legibilidade e dificulta rastreamento.
 
-6. **Falta de tratamento de exceções específicas:**
+5. **Falta de tratamento de exceções específicas:**
    - `BaseController` lança `NotFoundAPI`, mas `session_expired` e outros fluxos podem quebrar com `None`.
    - O handler global assume a existência de atributos (`exc.message`, `exc.status_code`) que nem toda exceção possui.
 
-7. **Arquitetura de sessão frágil:**
-   - A validação do token consulta o banco a cada requisição; a lógica de expiração está espalhada entre `ValidateToken` e `session_expired`.
-   - `ValidateToken` definido como `Protocol` não é idiomático para dependência FastAPI.
-
-8. **Injeção de dependência manual via Singleton:**
+6 **Injeção de dependência manual via Singleton:**
    - O `ApplicationManager` é um Singleton global, o que acopla o código e dificulta testes e inversão de controle (IoC) real.
 
-9. **CORS e middlewares configurados de forma dispersa** — `add_middleware` é chamado em `app/__init__.py` depois de importar routers, gerando ordem frágil de inicialização.
+7. **CORS e middlewares configurados de forma dispersa** — `add_middleware` é chamado em `app/__init__.py` depois de importar routers, gerando ordem frágil de inicialização.
 
-10. **Estrutura de erros incompleta:**
-    - `app/util/exception.py` define um `NewTestAPI` com status HTTP 450 (não padrão).
+8. **Estrutura de erros incompleta:**
     - Há importação entre módulos sujeita a ciclos (ex.: `app.views.erros` importa `app`).
 
-11. **Pouca cobertura de testes:**
+9. **Pouca cobertura de testes:**
     - Testes concentram-se em `SessionController` e `ApplicationManager`.
     - Não há testes de rotas (FastAPI `TestClient`), nem de `ProductController`, `UserController` ou do serviço de chat.
 
-12. **Sem camada de validação/negócio separada:**
+10. **Sem camada de validação/negócio separada:**
     - Regras de negócio (montar o hash, popular reviews) estão dentro das **views**, o que fere a separação de responsabilidades.
-
-13. **Arquivos auxiliares como `debug.py` e `main.py`** duplicam o bootstrap do servidor, e `main.py` importa `app` de forma indireta.
 
 ---
 
@@ -196,7 +184,6 @@ Isso reduz drasticamente a duplicação de código de persistência.
 ### 6.1. Segurança
 
 - **Mover `SECRET_KEY` e credenciais para variáveis de ambiente**, usando biblioteca como `pydantic-settings` para carregar e validar configuração.
-- **Remover segredos hardcoded** (`"jessica"`, `"fake-super-secret-token"`) e credenciais de banco versionadas.
 - **Usar força de hash adequada e rotação de chave**, além de `SecretStr` para não expor senhas em logs.
 - **Validação de token 100% via JWT** (assinatura + `exp`) em vez de consultar o banco a cada requisição; persistir sessão só se houver requisito de revogação.
 - **Configurar HTTPS**, `secure` nos cookies e revisar `allow_credentials=True` no CORS.

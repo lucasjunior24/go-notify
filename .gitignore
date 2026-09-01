@@ -160,3 +160,4 @@ infra/
 cov.xml
 
 .coverage
+.coverage*

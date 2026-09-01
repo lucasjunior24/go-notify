@@ -20,3 +20,8 @@ criar um test com o mock pras controllers e testando o ApplicationManager
 separar routes de user, product e sessions
 
 fazer integração com outra api
+py.test app/__init__.py --cov-report=xml --cov=app tests - ok
+
+ python -m pytest --cov=app --cov-report=xml tests - ok
+
+ python -m pytest --cov=app tests - ok

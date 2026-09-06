@@ -10,12 +10,5 @@ class TestChatAI:
         assert "test" == self.chat_ai_service.url
 
     def test_send_message(self):
-        result = self.chat_ai_service.send_message("TESTE")
-        assert USER_ID == result.user_id
-
-    # def test_get_session_id(self):
-    #     session_dto = self.sessionController.create(self.session_dto)
-    #     id = session_dto.id
-    #     result = self.sessionController.get_by_id(id=id)
-    #     assert session_dto.user_name == result.user_name
-    #     assert session_dto.token == result.token
+        chat = self.chat_ai_service.send_message("TESTE")
+        assert USER_ID == chat.user_id

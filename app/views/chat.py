@@ -8,7 +8,6 @@ from app.dtos.response import (
 from app.services.chat_ai_service import ChatAIService
 from app.util.requestsDTOs.chat import ChatDTO
 
-
 chat_ai_router = APIRouter(
     prefix="/chat_ai",
     tags=["Chat AI"],

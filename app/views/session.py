@@ -1,4 +1,3 @@
-
 from datetime import timedelta
 from http.client import HTTPException
 from typing import Annotated
@@ -8,12 +7,15 @@ from fastapi.params import Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.application_manager import ApplicationManager
-from app.auth.token import ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user, create_access_token
-from app.controllers.session import SessionController
+from app.auth.token import (
+    ACCESS_TOKEN_EXPIRE_MINUTES,
+    authenticate_user,
+    create_access_token,
+)
+from app.db.models.session import SessionController
 from app.dtos.response import ResponseDTO, ResponseModelDTO
 from app.dtos.session import SessionDTO
 from app.dtos.user import Token
-
 
 session_router = APIRouter(
     prefix="/session",
@@ -34,10 +36,11 @@ async def login_for_access_token(
         data={"sub": user.email, "scopes": form_data.scopes},
         expires_delta=access_token_expires,
     )
+
+    session_controller = ApplicationManager.get(SessionController)
     session = SessionDTO(
         token=access_token, expires_at=expire, user_name=user.name, user_id=str(user.id)
     )
-    session_controller = ApplicationManager.get(SessionController)
     session_controller.create(session)
     return Token(access_token=access_token, token_type="bearer")
 

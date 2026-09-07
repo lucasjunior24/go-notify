@@ -1,7 +1,7 @@
 import pytest
 
 from app.application_manager import ApplicationManager
-from app.controllers.session import SessionController
+from app.db.models.session import SessionController
 from app.dtos.session import SessionDTO
 from tests.setup.database import mock_client_db
 from basic_components_fpp.exception import NotFoundAPI

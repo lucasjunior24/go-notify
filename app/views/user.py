@@ -2,9 +2,14 @@ from typing import Annotated
 from app.controllers.user import UserController
 from app.db.models.user import UserDTO
 from app.application_manager import ApplicationManager
-from app.views import app
 from fastapi.security import HTTPAuthorizationCredentials
-from fastapi import Depends
+from fastapi import APIRouter, Depends
+
+user_router = APIRouter(
+    prefix="/user",
+    tags=["User"],
+    responses={404: {"description": "Not found"}},
+)
 
 
 from app.auth.token import (
@@ -16,12 +21,7 @@ from app.dtos.response import ResponseDTO, ResponseModelDTO
 from app.dtos.user import UserDBSessionDTO, createUserDTO
 
 
-@app.get("/users/me/items/", response_model=ResponseModelDTO[list[dict]])
-async def read_own_items():
-    return ResponseDTO(data=[{"item_id": "Foo", "owner": "owner"}], message="success")
-
-
-@app.get("/user", response_model=ResponseModelDTO[UserDTO])
+@user_router.get("/user", response_model=ResponseModelDTO[UserDTO])
 async def get_user_by_email(
     token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], email: str
 ):
@@ -30,7 +30,7 @@ async def get_user_by_email(
     return ResponseDTO(data=data)
 
 
-@app.get("/user/session", response_model=ResponseModelDTO[list[UserDBSessionDTO]])
+@user_router.get("/session", response_model=ResponseModelDTO[list[UserDBSessionDTO]])
 async def get_sessions_by_id(
     token: Annotated[HTTPAuthorizationCredentials, Depends(get_token)], user_id: str
 ):
@@ -40,15 +40,15 @@ async def get_sessions_by_id(
     return ResponseDTO(data=data)
 
 
-@app.get("/user/refactor", response_model=ResponseModelDTO[UserDTO])
+@user_router.get("/{user_id}", response_model=ResponseModelDTO[UserDTO])
 async def get_user_by_id(user_id: str):
     user_controller = ApplicationManager.get(UserController)
     data = user_controller.get_by_id(user_id)
     return ResponseDTO(data=data)
 
 
-@app.post(
-    "/user",
+@user_router.post(
+    "",
     responses={201: {"model": ResponseModelDTO[UserDTO]}},
     response_model=ResponseModelDTO[UserDTO],
 )

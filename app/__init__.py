@@ -1,8 +1,9 @@
 from app.views.product import product_router
 from app.views.chat import chat_ai_router
 from app.views.session import session_router
+from app.views.user import user_router
 
-from app.views.user import app
+from app.views import app
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -15,6 +16,7 @@ origins = [
 app.include_router(product_router)
 app.include_router(chat_ai_router)
 app.include_router(session_router)
+app.include_router(user_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

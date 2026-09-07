@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta, timezone
-from typing import Optional, Protocol
+from typing import Optional
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 import jwt
 from passlib.context import CryptContext
 
 from app.application_manager import ApplicationManager
-from app.controllers.session import SessionController
+from app.db.models.session import SessionController
 
 from app.controllers.user import UserController
 from app.db.models.user import UserDTO
@@ -55,12 +55,12 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def authenticate_user(email: str, password: str):
+def authenticate_user(email: str, password: str) -> UserDTO | None:
     user_controller = ApplicationManager.get(UserController)
     user = user_controller.get_filter("email", email, UserDTO)
 
     if not user:
-        return False
+        return None
     if not verify_password(password, user.hashed_password):
-        return False
+        return None
     return user

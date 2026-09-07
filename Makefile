@@ -11,13 +11,11 @@ deploy-test:
 	docker build -t go-notify-local .
 	docker-compose -f docker-compose.yml up -d
 
-test:
+cov:
 	python -m pytest --cov=app tests --cov-report=xml 
 
 cov-total:
 	python -m pytest --cov=app tests
-
-
 
 deploy-nginx:
 	docker-compose -f compose/compose-local/nginx.yaml up

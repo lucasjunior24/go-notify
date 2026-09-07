@@ -17,8 +17,6 @@ class SessionController(BaseController[SessionDTO]):
     def session_expired(self, token: str) -> bool:
         _, token = token.split(" ")
         session: SessionDTO = self.get_filter("token", token)
-        if session is None:
-            return True
         now = datetime.now().replace(tzinfo=None)
         expire = session.expires_at.replace(tzinfo=None) <= now
 

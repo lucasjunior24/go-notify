@@ -25,7 +25,7 @@ product_router = APIRouter(
 )
 
 
-@product_router.get("/{id}", response_model=ResponseModelDTO[ProductDTO])
+@product_router.get("/id={id}", response_model=ResponseModelDTO[ProductDTO])
 async def get_by_id(id: str):
     product_controller = ApplicationManager.get(ProductController)
     product = product_controller.get_by_id(id)

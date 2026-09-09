@@ -1,6 +1,4 @@
 from datetime import datetime
-from typing import Optional
-
 from pymongo import MongoClient
 from app.controllers.base import BaseController
 from app.dtos.session import SessionDTO

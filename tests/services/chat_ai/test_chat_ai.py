@@ -4,10 +4,12 @@ from tests.services.chat_ai.variables import USER_ID, RequestMock
 
 
 class TestChatAI:
-    chat_ai_service = ChatAIService(url="test", request=RequestMock)
+    URL_TEST = "test"
+    request = RequestMock(url=URL_TEST)
+    chat_ai_service = ChatAIService(request=request)
 
     def test_init_chat_ai_service(self):
-        assert "test" == self.chat_ai_service.url
+        assert self.URL_TEST == self.chat_ai_service.request.url
 
     def test_send_message(self):
         chat = self.chat_ai_service.send_message("TESTE")

@@ -7,9 +7,8 @@ from app.util.requestsDTOs.chat import ChatDTO
 
 
 class ChatAIService:
-    def __init__(self, url: str = CHAT_API_URL, request: Request = Request):
-        self.url = url
-        self.request: Request = request(url=self.url)
+    def __init__(self, request: Request | None = None):
+        self.request: Request = request or Request(url=CHAT_API_URL)
 
     def send_message(self, message: str) -> ChatDTO:
         params = {"message": message}
